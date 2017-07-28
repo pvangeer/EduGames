@@ -1,3 +1,7 @@
 
 *.bin
 CustomWPFColorPicker/.vs/CustomColorPicker/v14/.suo
+/EduGames/bin/Debug
+/EduGamesTest/obj/Debug
+/EduGames/obj/Debug
+/.vs/WritingGame/v14
