@@ -1,0 +1,153 @@
+﻿<UserControl x:Class="EduGames.Games.MandalaGame.View.MandalaRibbonView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:fluent="urn:fluent-ribbon"
+             xmlns:mandalaGame="clr-namespace:EduGames.Games.MandalaGame"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:global="clr-namespace:"
+             xmlns:modelView="clr-namespace:EduGames.Games.MandalaGame.ModelView"
+             xmlns:view="clr-namespace:EduGames.Games.MandalaGame.View"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/Fluent;Component/Themes/generic.xaml"/>
+    </UserControl.Resources>
+
+    <fluent:Ribbon Name="Ribbon">
+        <fluent:RibbonTabItem Header="Mandala" Name="RibbonTabItem">
+            <fluent:RibbonTabItem.DataContext>
+                <modelView:MandalaRibbonViewModel/>
+            </fluent:RibbonTabItem.DataContext>
+            <fluent:RibbonGroupBox Header="Spelen">
+                <fluent:Button x:Name="NewMandalaButton" 
+                               Header="Nieuw" 
+                               LargeIcon="/EduGames;component\Resources\Mandala.png"
+                               Command="{Binding NewMandalaCommand}"/>
+                <fluent:Button x:Name="SaveMandala" 
+                               Header="Opslaan" 
+                               LargeIcon="/EduGames;component\Resources\Mandala.png"
+                               Command="{Binding SaveMandalaCommand}"/>
+            </fluent:RibbonGroupBox>
+            <fluent:RibbonGroupBox Header="Achtergrond">
+                <fluent:DropDownButton SizeDefinition="Middle" Header="Achtergrond">
+                    <fluent:DropDownButton.Icon>
+                        <Grid Width="16" Height="16">
+                            <Border BorderThickness="1" VerticalAlignment="Bottom" Height="16">
+                                <Border.BorderBrush>Black</Border.BorderBrush>
+                                <Border.Background>
+                                    <SolidColorBrush Color="{Binding BackgroundColor}" />
+                                </Border.Background>
+                            </Border>
+                        </Grid>
+                    </fluent:DropDownButton.Icon>
+                    <fluent:ColorGallery 
+                        SelectedColor="{Binding BackgroundColor}" 
+                        IsNoColorButtonVisible="False" 
+                        Mode="ThemeColors" 
+                        SelectedColorChanged="OnSelectedColorChanged" 
+                        Tag="Background">
+                        <!--TODO: Enable this once fluent works and remove code behind-->
+                        <!--     <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectedColorChanged">
+                                <i:InvokeCommandAction Command="{Binding SetBackgroundColorCommand}"
+                                                       CommandParameter="{Binding ElementName=BackgroundColorGallery, Path=SelectedColor}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>-->
+                    </fluent:ColorGallery>
+                </fluent:DropDownButton>
+                <fluent:DropDownButton SizeDefinition="Middle" Header="Gridlijnen">
+                    <fluent:DropDownButton.Icon>
+                        <Grid Width="16" Height="16">
+                            <Border BorderThickness="1" VerticalAlignment="Bottom" Height="16">
+                                <Border.BorderBrush>Black</Border.BorderBrush>
+                                <Border.Background>
+                                    <SolidColorBrush Color="{Binding GridBrushStrokeColor}" />
+                                </Border.Background>
+                            </Border>
+                        </Grid>
+                    </fluent:DropDownButton.Icon>
+                    <fluent:ColorGallery 
+                        SelectedColor="{Binding GridBrushStrokeColor}" 
+                        IsNoColorButtonVisible="False" 
+                        Mode="ThemeColors" 
+                        SelectedColorChanged="OnSelectedColorChanged" 
+                        Tag="GridStrokeColor">
+                        <!--TODO: Enable this once fluent works and remove code behind-->
+                        <!--     <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectedColorChanged">
+                                <i:InvokeCommandAction Command="{Binding SetBackgroundColorCommand}"
+                                                       CommandParameter="{Binding ElementName=BackgroundColorGallery, Path=SelectedColor}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>-->
+                    </fluent:ColorGallery>
+                </fluent:DropDownButton>
+                <fluent:CheckBox Header="Grid tonen" IsChecked="{Binding ShowGrid}"></fluent:CheckBox>
+            </fluent:RibbonGroupBox>
+            <fluent:RibbonGroupBox Header="Elementen">
+                <ListView Height="60" Width="200" ItemsSource="{Binding ElementsList}">
+                    <i:Interaction.Behaviors>
+                        <view:ScrollOnNewItem/>
+                    </i:Interaction.Behaviors>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Height="16">
+                                <Canvas Width="20" Height="16" Margin="1">
+                                    <Grid Width="16" Height="16">
+                                        <Border BorderThickness="1" VerticalAlignment="Center" Height="14">
+                                            <Border.BorderBrush>Black</Border.BorderBrush>
+                                            <Border.Background>
+                                                <SolidColorBrush Color="{Binding StrokeColor}" />
+                                            </Border.Background>
+                                        </Border>
+                                    </Grid>
+                                </Canvas>
+                                <Label Content="{Binding DisplayName}" Height="16" Padding="0" Margin="0" VerticalAlignment="Top"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <fluent:Button Size="Middle" Header="Terugdraaien" Command="{Binding RevertLastChange}"></fluent:Button>
+            </fluent:RibbonGroupBox>
+            <fluent:RibbonGroupBox Header="Tekenen">
+                <StackPanel CanHorizontallyScroll="False" CanVerticallyScroll="False" Orientation="Horizontal">
+                    <Label Content="Resolutie:" HorizontalAlignment="Left"></Label>
+                    <ComboBox Width="100" Margin="0" Height="20" 
+                              ItemsSource="{Binding Path=PossibleResolutions}"
+                              DisplayMemberPath="Value"
+                              SelectedValuePath="Key"
+                              SelectedValue="{Binding Path=MandalaGridResolution}">
+                    </ComboBox>
+                </StackPanel>
+                <fluent:DropDownButton SizeDefinition="Middle" Header="Element">
+                    <fluent:DropDownButton.Icon>
+                        <Grid Width="16" Height="16">
+                            <Border BorderThickness="1" VerticalAlignment="Bottom" Height="16">
+                                <Border.BorderBrush>Black</Border.BorderBrush>
+                                <Border.Background>
+                                    <SolidColorBrush Color="{Binding ElementBrushStrokeColor}" />
+                                </Border.Background>
+                            </Border>
+                        </Grid>
+                    </fluent:DropDownButton.Icon>
+                    <fluent:ColorGallery 
+                        SelectedColor="{Binding ElementBrushStrokeColor}" 
+                        IsNoColorButtonVisible="False" 
+                        Mode="ThemeColors" 
+                        SelectedColorChanged="OnSelectedColorChanged" 
+                        Tag="ElementBrushStrokeColor">
+                        <!--TODO: Enable this once fluent works and remove code behind-->
+                        <!--     <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectedColorChanged">
+                                <i:InvokeCommandAction Command="{Binding SetBackgroundColorCommand}"
+                                                       CommandParameter="{Binding ElementName=BackgroundColorGallery, Path=SelectedColor}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>-->
+                    </fluent:ColorGallery>
+                </fluent:DropDownButton>
+                <fluent:Spinner Header="Lijndikte" Value="{Binding CurrentElementStrokeThickness}" Minimum="1" Maximum="10" Height="20"></fluent:Spinner>
+            </fluent:RibbonGroupBox>
+        </fluent:RibbonTabItem>
+    </fluent:Ribbon>
+</UserControl>
+

@@ -1,0 +1,43 @@
+﻿<fluent:RibbonWindow 
+    x:Class="EduGames.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:fluent="urn:fluent-ribbon"
+    mc:Ignorable="d" 
+    Title="MainWindow" 
+    Height="768" Width="1024" 
+    Background="White" Foreground="Black" 
+    x:Name="Window"
+    Icon="Resources/Logo.png">
+
+    <Window.Resources>
+        <ResourceDictionary Source="/Fluent;Component/Themes/generic.xaml"/>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <fluent:Ribbon Name="Ribbon">
+            <fluent:RibbonTabItem Header="Spellen" Name="GamesTab">
+                <fluent:RibbonGroupBox Header="Taal" Name="ReadingGroupBox" />
+                <fluent:RibbonGroupBox Header="Rekenen" Name="CalculaGroupBox" />
+                <fluent:RibbonGroupBox Header="Instellingen">
+                    <fluent:ToggleButton Name="SyntaxHighlightingToggleButon" 
+                                         IsChecked="True" 
+                                         Header="Kleur alle klinkers" 
+                                         Size="Middle" 
+                                         Unchecked="SyntaxHighlightingToggleButonClicked" 
+                                         Checked="SyntaxHighlightingToggleButonClicked" 
+                                         Icon="Resources/UseColorHighlighting.png" />
+                </fluent:RibbonGroupBox>
+            </fluent:RibbonTabItem>
+            
+        </fluent:Ribbon>
+        <ContentControl Grid.Row="1" Name="GamesContentPanel" />
+    </Grid>
+</fluent:RibbonWindow>

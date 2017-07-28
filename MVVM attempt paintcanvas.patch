@@ -1,0 +1,2619 @@
+Index: EduGames/EduGames.csproj
+===================================================================
+--- EduGames/EduGames.csproj	(revision 116)
++++ EduGames/EduGames.csproj	(working copy)
+@@ -75,7 +75,7 @@
+       <SubType>Designer</SubType>
+       <Generator>MSBuild:Compile</Generator>
+     </Page>
+-    <Page Include="Games\MandalaGame\MandalaGameControl.xaml">
++    <Page Include="Games\MandalaGame\View\MandalaGameView.xaml">
+       <SubType>Designer</SubType>
+       <Generator>MSBuild:Compile</Generator>
+     </Page>
+@@ -103,10 +103,14 @@
+       <DependentUpon>FlickerRibbonControl.xaml</DependentUpon>
+     </Compile>
+     <Compile Include="Games\IGamePlugin.cs" />
++    <Compile Include="Games\MandalaGame\ModelView\EllipseShapeObject.cs" />
++    <Compile Include="Games\MandalaGame\ModelView\IShapeObject.cs" />
++    <Compile Include="Games\MandalaGame\ModelView\LineShapeObject.cs" />
++    <Compile Include="Games\MandalaGame\ModelView\MandalaGameViewModel.cs" />
+     <Compile Include="Games\MandalaGame\ModelView\SaveMandalaCommand.cs" />
+     <Compile Include="Games\MandalaGame\Model\IMandalaElement.cs" />
+-    <Compile Include="Games\MandalaGame\MandalaGameControl.xaml.cs">
+-      <DependentUpon>MandalaGameControl.xaml</DependentUpon>
++    <Compile Include="Games\MandalaGame\View\MandalaGameView.xaml.cs">
++      <DependentUpon>MandalaGameView.xaml</DependentUpon>
+     </Compile>
+     <Compile Include="Games\MandalaGame\MandalaGamePlugin.cs" />
+     <Compile Include="Games\MandalaGame\View\MandalaRibbonView.xaml.cs">
+@@ -124,6 +128,7 @@
+     </Compile>
+     <Compile Include="Games\WordGame\WordGamePlugin.cs" />
+     <Compile Include="Helpers\RichTextBoxExtenstions.cs" />
++    <Compile Include="Helpers\SizeObserver.cs" />
+     <Compile Include="Helpers\WordImageFactory.cs" />
+     <Compile Include="Helpers\WpfExtensions.cs" />
+     <Compile Include="MainWindow.xaml.cs">
+@@ -132,6 +137,7 @@
+     </Compile>
+   </ItemGroup>
+   <ItemGroup>
++    <Compile Include="Properties\Annotations.cs" />
+     <Compile Include="Properties\AssemblyInfo.cs">
+       <SubType>Code</SubType>
+     </Compile>
+Index: EduGames/Games/MandalaGame/MandalaGameControl.xaml
+===================================================================
+--- EduGames/Games/MandalaGame/MandalaGameControl.xaml	(revision 114)
++++ EduGames/Games/MandalaGame/MandalaGameControl.xaml	(working copy)
+@@ -1,22 +0,0 @@
+-﻿<UserControl x:Class="EduGames.Games.MandalaGame.MandalaGameControl"
+-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+-             xmlns:mandalaGame="clr-namespace:EduGames.Games.MandalaGame"
+-             mc:Ignorable="d" 
+-             d:DesignHeight="500" 
+-             d:DesignWidth="500" 
+-             d:DataContext="{d:DesignInstance mandalaGame:MandalaGameControl}">
+-    <Grid>
+-        <Grid.RowDefinitions>
+-            <RowDefinition Height="*" />
+-        </Grid.RowDefinitions>
+-        <Grid.ColumnDefinitions>
+-            <ColumnDefinition Width="*" />
+-        </Grid.ColumnDefinitions>
+-        <Viewbox Grid.Row="0" Grid.Column="0" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center">
+-            <Canvas Name="PaintCanvas" Width="700" Height="700"></Canvas>
+-        </Viewbox>
+-    </Grid>
+-</UserControl>
+Index: EduGames/Games/MandalaGame/MandalaGameControl.xaml.cs
+===================================================================
+--- EduGames/Games/MandalaGame/MandalaGameControl.xaml.cs	(revision 115)
++++ EduGames/Games/MandalaGame/MandalaGameControl.xaml.cs	(working copy)
+@@ -1,316 +0,0 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Collections.Specialized;
+-using System.ComponentModel;
+-using System.IO;
+-using System.Linq;
+-using System.Windows;
+-using System.Windows.Controls;
+-using System.Windows.Input;
+-using System.Windows.Markup;
+-using System.Windows.Media;
+-using System.Windows.Shapes;
+-using System.Xml;
+-
+-namespace EduGames.Games.MandalaGame
+-{
+-    /// <summary>
+-    /// Interaction logic for MandalaGameControl.xaml
+-    /// </summary>
+-    public partial class MandalaGameControl : UserControl
+-    {
+-        private bool paintingNewElement;
+-        private List<Point> newElementPoints;
+-        private readonly string[] dependentPropertyNames =
+-        {
+-            "MandalaGridResolution",
+-            "ShowGrid",
+-            "GridBrushStrokeThickness",
+-            "GridBrushStrokeColor"
+-        };
+-
+-        public MandalaGameControl()
+-        {
+-            InitializeComponent();
+-            PaintCanvas.SizeChanged += CanvasSizeChanged;
+-            PreviewMouseDown += HandleMouseDown;
+-        }
+-
+-        private Mandala mandala;
+-        public Mandala Mandala
+-        {
+-            get { return mandala; }
+-            set
+-            {
+-                if (mandala != null)
+-                {
+-                    ((INotifyPropertyChanged)mandala).PropertyChanged -= SettingsPropertyChanged;
+-                    ((INotifyCollectionChanged) mandala.Elements).CollectionChanged -= ElementsCollectionChanged;
+-                }
+-                CancelPaintingElement(this);
+-                mandala = value;
+-                if (mandala != null)
+-                {
+-                    ((INotifyPropertyChanged)mandala).PropertyChanged += SettingsPropertyChanged;
+-                    ((INotifyCollectionChanged)mandala.Elements).CollectionChanged += ElementsCollectionChanged;
+-                    PaintCanvas.Background = new SolidColorBrush(mandala.BackgroundColor);
+-                    RepaintCanvas();
+-                }
+-            }
+-        }
+-
+-        private void ElementsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+-        {
+-            if (e.Action == NotifyCollectionChangedAction.Remove)
+-            {
+-                RepaintCanvas();
+-            }
+-        }
+-
+-        private void SettingsPropertyChanged(object sender, PropertyChangedEventArgs e)
+-        {
+-            if (e.PropertyName == "BackgroundColor")
+-            {
+-                PaintCanvas.Background = new SolidColorBrush(mandala.BackgroundColor);
+-            }
+-
+-            if (dependentPropertyNames.Contains(e.PropertyName))
+-            {
+-                RepaintCanvas();
+-            }
+-        }
+-
+-        private void HandleMouseUp(object sender, MouseButtonEventArgs e)
+-        {
+-            var points = CancelPaintingElement(sender);
+-            if (points != null)
+-            {
+-                mandala.Elements.Add(new MandalaPolygonElement("Getrokken lijn")
+-                {
+-                    Points = CreateRelativePointsArray(points),
+-                    StrokeColor = Mandala.CurrentElementColor,
+-                    StrokeThickness = Mandala.CurrentElementStrokeThickness,
+-                    NumberOfDubplications = Mandala.MandalaGridResolution
+-                });
+-            }
+-            RepaintCanvas();
+-        }
+-
+-        private void HandleMouseMove(object sender, MouseEventArgs e)
+-        {
+-            if (!paintingNewElement)
+-            {
+-                return;
+-            }
+-
+-            var point = e.GetPosition(PaintCanvas);
+-            var relativePoint = CreateRelativePointsArray(new[] { point }).FirstOrDefault();
+-            if (Math.Sqrt(Math.Pow(relativePoint.X, 2) + Math.Pow(relativePoint.Y, 2)) > 1.0)
+-            {
+-                var points = CancelPaintingElement(sender);
+-                if (points != null)
+-                {
+-                    mandala.Elements.Add(new MandalaPolygonElement("Getrokken lijn")
+-                    {
+-                        Points = CreateRelativePointsArray(points),
+-                        StrokeColor = Mandala.CurrentElementColor,
+-                        StrokeThickness = Mandala.CurrentElementStrokeThickness,
+-                        NumberOfDubplications = Mandala.MandalaGridResolution
+-                    });
+-                }
+-                RepaintCanvas();
+-                return;
+-            }
+-            newElementPoints.Add(point);
+-
+-            RepaintCanvas();
+-        }
+-
+-        private void HandleMouseDown(object sender, MouseButtonEventArgs e)
+-        {
+-            CancelPaintingElement(null);
+-            if (e.LeftButton != MouseButtonState.Pressed)
+-            {
+-                return;
+-            }
+-
+-            paintingNewElement = true;
+-            PreviewMouseMove += HandleMouseMove;
+-            PreviewMouseUp += HandleMouseUp;
+-            newElementPoints = new List<Point> { e.GetPosition(PaintCanvas) };
+-            ((UIElement)sender).CaptureMouse();
+-        }
+-
+-        private double CanvasRadius => Math.Min(PaintCanvas.ActualWidth, PaintCanvas.ActualHeight) / 2.0;
+-
+-        private Point CanvasCenter => new Point(PaintCanvas.ActualWidth / 2.0, PaintCanvas.ActualHeight / 2.0);
+-
+-        private IEnumerable<Point> CreateRelativePointsArray(IEnumerable<Point> points)
+-        {
+-            var list = new List<Point>();
+-            foreach (var point in points)
+-            {
+-                list.Add(new Point((point.X - CanvasCenter.X)/CanvasRadius, (point.Y - CanvasCenter.Y) / CanvasRadius));
+-            }
+-            return list;
+-        }
+-        
+-        private IList<Point> CancelPaintingElement(object sender)
+-        {
+-            if (sender != null)
+-            {
+-                PreviewMouseMove -= HandleMouseMove;
+-                PreviewMouseUp -= HandleMouseUp;
+-                ((UIElement) sender).ReleaseMouseCapture();
+-            }
+-            if (paintingNewElement && newElementPoints != null && newElementPoints.Count > 1)
+-            {
+-                var points = newElementPoints.ToList();
+-                paintingNewElement = false;
+-                newElementPoints = null;
+-                return points;
+-            }
+-            paintingNewElement = false;
+-            newElementPoints = null;
+-            return null;
+-        }
+-
+-        public void RepaintCanvas()
+-        {
+-            PaintCanvas.Children.Clear();
+-            if (Mandala.ShowGrid)
+-            {
+-                AddGridElements();
+-            }
+-            AddPaintedElements();
+-            AddPaintedElement();
+-        }
+-
+-        private void AddPaintedElements()
+-        {
+-            foreach (var element in mandala.Elements.OfType<MandalaPolygonElement>())
+-            {
+-                var polyLine = new Polyline
+-                {
+-                    Points = new PointCollection(CreateRelatedPointsArray(element.Points)),
+-                    Stroke = new SolidColorBrush(element.StrokeColor),
+-                    StrokeThickness = element.StrokeThickness
+-                };
+-                PaintMandalaObject(polyLine, 0, 0, PaintCanvas.ActualWidth / 2.0, PaintCanvas.ActualHeight / 2.0, element.NumberOfDubplications);
+-            }
+-        }
+-
+-        private IEnumerable<Point> CreateRelatedPointsArray(IEnumerable<Point> elementPoints)
+-        {
+-            var list = new List<Point>();
+-            foreach (var point in elementPoints)
+-            {
+-                list.Add(new Point(CanvasCenter.X + point.X*CanvasRadius, CanvasCenter.Y + point.Y * CanvasRadius));
+-            }
+-            return list;
+-        }
+-
+-        private void AddPaintedElement()
+-        {
+-            if (paintingNewElement && newElementPoints != null && newElementPoints.Count > 1)
+-            {
+-                var polyLine = new Polyline
+-                {
+-                    Points = new PointCollection(newElementPoints),
+-                    Stroke = new SolidColorBrush(Mandala.PaintBrushStrokeColor),
+-                    StrokeThickness = Mandala.PaintBrushStrokeThickness,
+-                    StrokeDashArray = new DoubleCollection(new[] { 2.0, 2 }),
+-                };
+-                PaintMandalaObject(polyLine, 0, 0, PaintCanvas.ActualWidth / 2.0, PaintCanvas.ActualHeight / 2.0);
+-            }
+-        }
+-
+-        private void AddGridElements()
+-        {
+-            if (CanvasRadius < 1)
+-            {
+-                return;
+-            }
+-
+-            var topCanvasMargin = (PaintCanvas.ActualHeight - CanvasRadius * 2.0) / 2.0;
+-
+-            var line = new Line
+-            {
+-                X1 = 0,
+-                X2 = 0,
+-                Y1 = 0,
+-                Y2 = CanvasRadius,
+-                Stroke = new SolidColorBrush(Mandala.GridBrushStrokeColor),
+-                StrokeThickness = Mandala.GridBrushStrokeThickness,
+-                StrokeDashArray = new DoubleCollection(new[] { 2.0, 2 }),
+-            };
+-            PaintMandalaObject(line,CanvasCenter.X, topCanvasMargin, 0, CanvasCenter.Y);
+-
+-            for (int i = 0; i < Mandala.CircularGridResolution + 1; i++)
+-            {
+-                var gridLineRadius = CanvasRadius / Mandala.CircularGridResolution * i;
+-                var gridLine = new Ellipse
+-                {
+-                    StrokeThickness = Mandala.GridBrushStrokeThickness,
+-                    StrokeDashArray = new DoubleCollection(new[] { 2.0, 2 }),
+-                    Stroke = new SolidColorBrush(Mandala.GridBrushStrokeColor),
+-                    Width = gridLineRadius * 2,
+-                    Height = gridLineRadius * 2,
+-                };
+-
+-                var leftCanvasMargin = (PaintCanvas.ActualWidth - gridLineRadius * 2.0) / 2.0;
+-                topCanvasMargin = (PaintCanvas.ActualHeight - gridLineRadius * 2.0) / 2.0;
+-                
+-                AlignAndAddElementToCanvas(gridLine, leftCanvasMargin, topCanvasMargin);
+-            }
+-        }
+-
+-
+-        private void PaintMandalaObject(UIElement uiElement, double left, double top, double rotationCenterLeft, double rotationCenterTop, int numberOfDuplications = -1)
+-        {
+-            if (numberOfDuplications == -1)
+-            {
+-                numberOfDuplications = Mandala.MandalaGridResolution;
+-            }
+-
+-            var dAngle = 360.0 / numberOfDuplications;
+-
+-            for (int i = 0; i < numberOfDuplications; i++)
+-            {
+-                var newElement = CloneElement(uiElement);
+-                newElement.RenderTransform = new RotateTransform(i * dAngle, rotationCenterLeft, rotationCenterTop);
+-                
+-                AlignAndAddElementToCanvas(newElement, left, top);
+-            }
+-        }
+-
+-        private static UIElement CloneElement(UIElement orig)
+-        {
+-
+-            if (orig == null)
+-            {
+-                return null;
+-            }
+-
+-            string s = XamlWriter.Save(orig);
+-
+-            StringReader stringReader = new StringReader(s);
+-
+-            XmlReader xmlReader = XmlReader.Create(stringReader, new XmlReaderSettings());
+-
+-            return (UIElement)XamlReader.Load(xmlReader);
+-        }
+-
+-        private void AlignAndAddElementToCanvas(UIElement uiElement, double left, double top)
+-        {
+-            Canvas.SetTop(uiElement, top);
+-            Canvas.SetLeft(uiElement, left);
+-            PaintCanvas.Children.Add(uiElement);
+-        }
+-
+-        private void CanvasSizeChanged(object sender, SizeChangedEventArgs e)
+-        {
+-            RepaintCanvas();
+-        }
+-    }
+-}
+Index: EduGames/Games/MandalaGame/MandalaGamePlugin.cs
+===================================================================
+--- EduGames/Games/MandalaGame/MandalaGamePlugin.cs	(revision 117)
++++ EduGames/Games/MandalaGame/MandalaGamePlugin.cs	(working copy)
+@@ -1,5 +1,6 @@
+ ﻿using System;
+ using System.Windows.Controls;
++using EduGames.Games.MandalaGame.Model;
+ using EduGames.Games.MandalaGame.ModelView;
+ using Fluent;
+ 
+@@ -8,12 +9,12 @@
+     public class MandalaGamePlugin : IGamePlugin
+     {
+         private readonly View.MandalaRibbonView ribbon;
+-        private readonly MandalaGameControl mandalaGameControl;
++        private readonly View.MandalaGameView mandalaGameView;
+ 
+         public MandalaGamePlugin()
+         {
+             ribbon = new View.MandalaRibbonView();
+-            mandalaGameControl = new MandalaGameControl();
++            mandalaGameView = new View.MandalaGameView();
+ 
+             InitiateNewMandala();
+         }
+@@ -25,12 +26,15 @@
+             mandalaRibbonViewModel.NewMandalaRequested += NewMandalaClicked;
+             mandalaRibbonViewModel.SaveMandalaRequested += SaveMandalaClicked;
+             ribbon.ViewModel = mandalaRibbonViewModel;
+-            mandalaGameControl.Mandala = mandala;
++
++            var gameViewModel = new MandalaGameViewModel(mandala);
++            mandalaGameView.ViewModel = gameViewModel;
++            mandalaGameView.Mandala = mandala;
+         }
+ 
+         private void SaveMandalaClicked(object sender, EventArgs e)
+         {
+-            MandalaSaveHelper.SaveMandala(mandalaGameControl.PaintCanvas);
++            MandalaSaveHelper.SaveMandala(mandalaGameView.PaintCanvas);
+         }
+ 
+         private void NewMandalaClicked(object sender, EventArgs e)
+@@ -40,7 +44,7 @@
+ 
+         public string Name => "Mandala maker";
+ 
+-        public Control GameControl => mandalaGameControl;
++        public Control GameControl => mandalaGameView;
+ 
+         public RibbonTabItem GameRibbon => ribbon.RibbonTabItem;
+ 
+Index: EduGames/Games/MandalaGame/Model/Mandala.cs
+===================================================================
+--- EduGames/Games/MandalaGame/Model/Mandala.cs	(revision 116)
++++ EduGames/Games/MandalaGame/Model/Mandala.cs	(working copy)
+@@ -2,7 +2,7 @@
+ using System.ComponentModel;
+ using System.Windows.Media;
+ 
+-namespace EduGames.Games.MandalaGame
++namespace EduGames.Games.MandalaGame.Model
+ {
+     public class Mandala : INotifyPropertyChanged
+     {
+@@ -11,8 +11,6 @@
+         private bool showGrid;
+         private int currentElementStrokeThickness;
+         private Color currentElementColor;
+-        private double paintBrushStrokeThickness;
+-        private Color paintBrushStrokeColor;
+         private double gridBrushStrokeThickness;
+         private Color gridBrushStrokeColor;
+         private Color backgroundColor;
+@@ -20,11 +18,9 @@
+         public Mandala()
+         {
+             Elements = new ObservableCollection<IMandalaElement>();
+-            BackgroundColor = Colors.LightYellow;
++            BackgroundColor = Colors.LightSkyBlue;
+             CircularGridResolution = 10;
+             MandalaGridResolution = 6;
+-            PaintBrushStrokeColor = Colors.Purple;
+-            PaintBrushStrokeThickness = 1;
+             GridBrushStrokeColor = Colors.Gray;
+             GridBrushStrokeThickness = 1;
+             CurrentElementColor = Colors.Green;
+@@ -97,26 +93,6 @@
+             }
+         }
+ 
+-        public double PaintBrushStrokeThickness
+-        {
+-            get { return paintBrushStrokeThickness; }
+-            set
+-            {
+-                paintBrushStrokeThickness = value;
+-                OnPropertyChanged(nameof(PaintBrushStrokeThickness));
+-            }
+-        }
+-
+-        public Color PaintBrushStrokeColor
+-        {
+-            get { return paintBrushStrokeColor; }
+-            set
+-            {
+-                paintBrushStrokeColor = value;
+-                OnPropertyChanged(nameof(PaintBrushStrokeColor));
+-            }
+-        }
+-
+         public double GridBrushStrokeThickness
+         {
+             get { return gridBrushStrokeThickness; }
+Index: EduGames/Games/MandalaGame/Model/MandalaPolygonElement.cs
+===================================================================
+--- EduGames/Games/MandalaGame/Model/MandalaPolygonElement.cs	(revision 116)
++++ EduGames/Games/MandalaGame/Model/MandalaPolygonElement.cs	(working copy)
+@@ -3,7 +3,7 @@
+ using System.Windows;
+ using System.Windows.Media;
+ 
+-namespace EduGames.Games.MandalaGame
++namespace EduGames.Games.MandalaGame.Model
+ {
+     public class MandalaPolygonElement : IMandalaElement
+     {
+Index: EduGames/Games/MandalaGame/ModelView/EllipseShapeObject.cs
+===================================================================
+--- EduGames/Games/MandalaGame/ModelView/EllipseShapeObject.cs	(revision 0)
++++ EduGames/Games/MandalaGame/ModelView/EllipseShapeObject.cs	(working copy)
+@@ -0,0 +1,83 @@
++﻿using System.ComponentModel;
++using System.Windows.Media;
++using EduGames.Annotations;
++
++namespace EduGames.Games.MandalaGame.ModelView
++{
++    internal class EllipseShapeObject : IShapeObject, INotifyPropertyChanged
++    {
++        private Transform renderTransform;
++        private double strokeThickness;
++        private Color color;
++        private double radius;
++        private DoubleCollection strokeDashArray;
++
++        public EllipseShapeObject(double radius)
++        {
++            this.Radius = radius;
++        }
++
++        public double Radius
++        {
++            get { return radius; }
++            set
++            {
++                radius = value;
++                OnPropertyChanged(nameof(Radius));
++            }
++        }
++
++        public object Clone()
++        {
++            return MemberwiseClone();
++        }
++
++        public Color Color
++        {
++            get { return color; }
++            set
++            {
++                color = value;
++                OnPropertyChanged(nameof(Color));
++            }
++        }
++
++        public double StrokeThickness
++        {
++            get { return strokeThickness; }
++            set
++            {
++                strokeThickness = value;
++                OnPropertyChanged(nameof(StrokeThickness));
++            }
++        }
++
++        public Transform RenderTransform
++        {
++            get { return renderTransform; }
++            set
++            {
++                renderTransform = value;
++                OnPropertyChanged(nameof(RenderTransform));
++            }
++        }
++
++        public DoubleCollection StrokeDashArray
++        {
++            get { return strokeDashArray; }
++            set
++            {
++                strokeDashArray = value; 
++                OnPropertyChanged(nameof(StrokeDashArray));
++            }
++        }
++
++        public event PropertyChangedEventHandler PropertyChanged;
++
++        [NotifyPropertyChangedInvocator]
++        protected virtual void OnPropertyChanged(string propertyName)
++        {
++            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
++        }
++    }
++}
+\ No newline at end of file
+Index: EduGames/Games/MandalaGame/ModelView/IShapeObject.cs
+===================================================================
+--- EduGames/Games/MandalaGame/ModelView/IShapeObject.cs	(revision 0)
++++ EduGames/Games/MandalaGame/ModelView/IShapeObject.cs	(working copy)
+@@ -0,0 +1,14 @@
++﻿using System;
++using System.Windows.Media;
++
++namespace EduGames.Games.MandalaGame.ModelView
++{
++    public interface IShapeObject : ICloneable
++    {
++        Color Color { get; set; }
++
++        double StrokeThickness { get; set; }
++
++        Transform RenderTransform { get; set; }
++    }
++}
+\ No newline at end of file
+Index: EduGames/Games/MandalaGame/ModelView/LineShapeObject.cs
+===================================================================
+--- EduGames/Games/MandalaGame/ModelView/LineShapeObject.cs	(revision 0)
++++ EduGames/Games/MandalaGame/ModelView/LineShapeObject.cs	(working copy)
+@@ -0,0 +1,78 @@
++﻿using System.ComponentModel;
++using System.Windows.Media;
++using EduGames.Annotations;
++
++namespace EduGames.Games.MandalaGame.ModelView
++{
++    public class LineShapeObject : IShapeObject, INotifyPropertyChanged
++    {
++        private Color color;
++        private double strokeThickness;
++        private Transform renderTransform;
++
++        public LineShapeObject(double x1, double y1, double x2, double y2, Color color, double strokeThickness, Transform renderTransform, DoubleCollection strokeDashArray = null)
++        {
++            X1 = x1;
++            Y1 = y1;
++            X2 = x2;
++            Y2 = y2;
++            Color = color;
++            StrokeThickness = strokeThickness;
++            RenderTransform = renderTransform;
++            StrokeDashArray = strokeDashArray;
++        }
++
++        public double X1 { get; }
++
++        public double X2 { get; }
++
++        public double Y1 { get; }
++
++        public double Y2 { get; }
++
++        public Color Color
++        {
++            get { return color; }
++            set
++            {
++                color = value;
++                OnPropertyChanged(nameof(Color));
++            }
++        }
++
++        public double StrokeThickness
++        {
++            get { return strokeThickness; }
++            set
++            {
++                strokeThickness = value;
++                OnPropertyChanged(nameof(StrokeThickness));
++            }
++        }
++
++        public DoubleCollection StrokeDashArray { get; }
++
++        public Transform RenderTransform
++        {
++            get { return renderTransform; }
++            set
++            {
++                renderTransform = value;
++                OnPropertyChanged(nameof(RenderTransform));
++            }
++        }
++
++        public event PropertyChangedEventHandler PropertyChanged;
++
++        [NotifyPropertyChangedInvocator]
++        protected virtual void OnPropertyChanged(string propertyName)
++        {
++            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
++        }
++
++        public object Clone()
++        {
++            return this.MemberwiseClone();
++        }
++    }
++}
+\ No newline at end of file
+Index: EduGames/Games/MandalaGame/ModelView/MandalaGameViewModel.cs
+===================================================================
+--- EduGames/Games/MandalaGame/ModelView/MandalaGameViewModel.cs	(revision 0)
++++ EduGames/Games/MandalaGame/ModelView/MandalaGameViewModel.cs	(working copy)
+@@ -0,0 +1,188 @@
++﻿using System;
++using System.Collections.Generic;
++using System.Collections.ObjectModel;
++using System.Collections.Specialized;
++using System.ComponentModel;
++using System.Globalization;
++using System.IO;
++using System.Linq;
++using System.Text;
++using System.Windows;
++using System.Windows.Controls;
++using System.Windows.Data;
++using System.Windows.Markup;
++using System.Windows.Media;
++using System.Windows.Shapes;
++using System.Xml;
++using EduGames.Annotations;
++using EduGames.Games.MandalaGame.Model;
++using Brush = System.Windows.Media.Brush;
++
++namespace EduGames.Games.MandalaGame.ModelView
++{
++    public class MandalaGameViewModel : INotifyPropertyChanged
++    {
++        private Mandala mandala;
++        private readonly ObservableCollection<IShapeObject> gridShapesCollection = new ObservableCollection<IShapeObject>();
++        private readonly ObservableCollection<IShapeObject> elementShapesCollection = new ObservableCollection<IShapeObject>();
++
++        public MandalaGameViewModel()
++        {
++            this.mandala = new Mandala();
++        }
++
++        public MandalaGameViewModel(Mandala mandala)
++        {
++            Mandala = mandala;
++        }
++
++        public Mandala Mandala
++        {
++            get { return mandala; }
++            private set
++            {
++                if (mandala != null)
++                {
++                    mandala.PropertyChanged -= MandalaPropertyChanged;
++                }
++                mandala = value;
++                if (mandala != null)
++                {
++                    mandala.PropertyChanged += MandalaPropertyChanged;
++                    UpdateGridShapes("");
++                }
++            }
++        }
++
++        private void MandalaPropertyChanged(object sender, PropertyChangedEventArgs e)
++        {
++            if (e.PropertyName == nameof(Mandala.BackgroundColor))
++            {
++                OnPropertyChanged(nameof(BackgroundBrush));
++            }
++
++            if (e.PropertyName == nameof(Mandala.ShowGrid) || e.PropertyName == nameof(Mandala.GridBrushStrokeColor) || e.PropertyName == nameof(Mandala.GridBrushStrokeThickness) || e.PropertyName == nameof(Mandala.MandalaGridResolution))
++            {
++                UpdateGridShapes(e.PropertyName);
++            }
++
++            if (e.PropertyName == nameof(Mandala.CurrentElementStrokeThickness) ||
++                e.PropertyName == nameof(Mandala.CurrentElementColor) ||
++                e.PropertyName == nameof(Mandala.MandalaGridResolution))
++            {
++                // TODO: Expose propertyChanged of these properties, such that the view can draw the correct color.
++            }
++        }
++
++        private void UpdateGridShapes(string propertyName)
++        {
++            switch (propertyName)
++            {
++                case nameof(Mandala.ShowGrid):
++                    if (!Mandala.ShowGrid)
++                    {
++                        gridShapesCollection.Clear();
++                        OnPropertyChanged(nameof(GridShapes));
++                    }
++                    else
++                    {
++                        GenerateAllGridLines();
++                        OnPropertyChanged(nameof(GridShapes));
++                    }
++                    break;
++                case "":
++                    GenerateAllGridLines();
++                    OnPropertyChanged(nameof(GridShapes));
++                    break;
++                case nameof(Mandala.MandalaGridResolution):
++                    ChangeMandalaGridResolution();
++                    OnPropertyChanged(nameof(GridShapes));
++                    break;
++                case nameof(Mandala.GridBrushStrokeColor):
++                    foreach (var shapeObject in gridShapesCollection)
++                    {
++                        shapeObject.Color = Mandala.GridBrushStrokeColor;
++                    }
++                    OnPropertyChanged(nameof(GridShapes));
++                    break;
++                case nameof(Mandala.GridBrushStrokeThickness):
++                    foreach (var shapeObject in gridShapesCollection)
++                    {
++                        shapeObject.StrokeThickness = Mandala.GridBrushStrokeThickness;
++                    }
++                    OnPropertyChanged(nameof(GridShapes));
++                    break;
++            }
++        }
++
++        private void ChangeMandalaGridResolution()
++        {
++            var objectsToRemove = gridShapesCollection.OfType<LineShapeObject>().ToList();
++            foreach (var lineShapeObject in objectsToRemove)
++            {
++                gridShapesCollection.Remove(lineShapeObject);
++            }
++
++            CreateMandalaGridLines();
++        }
++
++        private void GenerateAllGridLines()
++        {
++            CreateMandalaGridLines();
++            CreateCircularGridLines();
++        }
++
++        private void CreateCircularGridLines()
++        {
++            for (int i = 0; i < Mandala.CircularGridResolution + 1; i++)
++            {
++                var gridLineRadius = 1.0 / Mandala.CircularGridResolution * i;
++                var gridLine = new EllipseShapeObject(gridLineRadius)
++                {
++                    StrokeThickness = Mandala.GridBrushStrokeThickness,
++                    StrokeDashArray = new DoubleCollection(new[] { 2.0, 2 }),
++                    Color = Mandala.GridBrushStrokeColor,
++                };
++                gridShapesCollection.Add(gridLine);
++            }
++        }
++
++        private void CreateMandalaGridLines()
++        {
++            var line = new LineShapeObject(0, 0, 0, 1, Mandala.GridBrushStrokeColor, Mandala.GridBrushStrokeThickness,
++                null, new DoubleCollection(new[] {2.0, 2}));
++            CreateMandalaObject(line);
++        }
++
++        private void CreateMandalaObject(IShapeObject shapeObject, int numberOfDuplications = -1)
++        {
++            if (numberOfDuplications == -1)
++            {
++                numberOfDuplications = Mandala.MandalaGridResolution;
++            }
++
++            var dAngle = 360.0 / numberOfDuplications;
++
++            for (int i = 0; i < numberOfDuplications; i++)
++            {
++                IShapeObject newObject = (IShapeObject)shapeObject.Clone();
++                newObject.RenderTransform = new RotateTransform(i * dAngle, 0, 0);
++                gridShapesCollection.Add(newObject);
++            }
++        }
++
++        public event PropertyChangedEventHandler PropertyChanged;
++
++        public Brush BackgroundBrush => new SolidColorBrush(mandala.BackgroundColor);
++
++        public ObservableCollection<IShapeObject> ElementShapes => elementShapesCollection;
++
++        public ObservableCollection<IShapeObject> GridShapes => gridShapesCollection;
++
++        [NotifyPropertyChangedInvocator]
++        protected virtual void OnPropertyChanged(string propertyName)
++        {
++            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
++        }
++    }
++}
+Index: EduGames/Games/MandalaGame/ModelView/MandalaRibbonViewModel.cs
+===================================================================
+--- EduGames/Games/MandalaGame/ModelView/MandalaRibbonViewModel.cs	(revision 117)
++++ EduGames/Games/MandalaGame/ModelView/MandalaRibbonViewModel.cs	(working copy)
+@@ -1,10 +1,10 @@
+ ﻿using System;
+ using System.Collections.Generic;
+ using System.Collections.ObjectModel;
+-using System.Collections.Specialized;
+ using System.ComponentModel;
+ using System.Windows.Input;
+ using System.Windows.Media;
++using EduGames.Games.MandalaGame.Model;
+ 
+ namespace EduGames.Games.MandalaGame.ModelView
+ {
+Index: EduGames/Games/MandalaGame/ModelView/RevertLastChangeCommand.cs
+===================================================================
+--- EduGames/Games/MandalaGame/ModelView/RevertLastChangeCommand.cs	(revision 116)
++++ EduGames/Games/MandalaGame/ModelView/RevertLastChangeCommand.cs	(working copy)
+@@ -1,6 +1,7 @@
+ ﻿using System;
+ using System.Collections.Specialized;
+ using System.Windows.Input;
++using EduGames.Games.MandalaGame.Model;
+ 
+ namespace EduGames.Games.MandalaGame.ModelView
+ {
+Index: EduGames/Games/MandalaGame/View/MandalaGameView.xaml
+===================================================================
+--- EduGames/Games/MandalaGame/View/MandalaGameView.xaml	(revision 0)
++++ EduGames/Games/MandalaGame/View/MandalaGameView.xaml	(working copy)
+@@ -0,0 +1,38 @@
++﻿<UserControl x:Class="EduGames.Games.MandalaGame.View.MandalaGameView"
++             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
++             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
++             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
++             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
++             xmlns:modelView="clr-namespace:EduGames.Games.MandalaGame.ModelView"
++             xmlns:eduGames="clr-namespace:EduGames"
++             mc:Ignorable="d"
++             d:DesignHeight="500" 
++             d:DesignWidth="500">
++    <UserControl.DataContext>
++        <modelView:MandalaGameViewModel/>
++    </UserControl.DataContext>
++    <UserControl.Resources>
++        <DataTemplate DataType="{x:Type modelView:LineShapeObject}" >
++            <Canvas>
++                <Line Canvas.Left="{Binding X}" Canvas.Top="{Binding Y}" Width="13" Height="23"/>
++            </Canvas>
++        </DataTemplate>
++
++        <DataTemplate DataType="{x:Type modelView:EllipseShapeObject}">
++            <Canvas>
++                <Ellipse Canvas.Left="{Binding X}" Canvas.Top="{Binding Y}" Width="13" Height="13" Fill="Blue" />
++            </Canvas>
++        </DataTemplate>
++    </UserControl.Resources>
++    <Grid>
++        <Grid.RowDefinitions>
++            <RowDefinition Height="*" />
++        </Grid.RowDefinitions>
++        <Grid.ColumnDefinitions>
++            <ColumnDefinition Width="*" />
++        </Grid.ColumnDefinitions>
++        <Viewbox Grid.Row="0" Grid.Column="0" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center">
++            <Canvas Name="PaintCanvas" Width="700" Height="700" Background="{Binding BackgroundBrush}"></Canvas>
++        </Viewbox>
++    </Grid>
++</UserControl>
+Index: EduGames/Games/MandalaGame/View/MandalaGameView.xaml.cs
+===================================================================
+--- EduGames/Games/MandalaGame/View/MandalaGameView.xaml.cs	(revision 0)
++++ EduGames/Games/MandalaGame/View/MandalaGameView.xaml.cs	(working copy)
+@@ -0,0 +1,466 @@
++﻿using System;
++using System.Collections.Generic;
++using System.Collections.Specialized;
++using System.ComponentModel;
++using System.IO;
++using System.Linq;
++using System.Windows;
++using System.Windows.Controls;
++using System.Windows.Input;
++using System.Windows.Markup;
++using System.Windows.Media;
++using System.Windows.Shapes;
++using System.Xml;
++using EduGames.Games.MandalaGame.Model;
++using EduGames.Games.MandalaGame.ModelView;
++
++namespace EduGames.Games.MandalaGame.View
++{
++    /// <summary>
++    /// Interaction logic for MandalaGameView.xaml
++    /// </summary>
++    public partial class MandalaGameView : UserControl
++    {
++        private bool paintingNewElement;
++        private List<Point> newElementPoints;
++        private readonly string[] dependentPropertyNames =
++        {
++            "MandalaGridResolution",
++            "ShowGrid",
++            "GridBrushStrokeThickness",
++            "GridBrushStrokeColor"
++        };
++
++        public MandalaGameView()
++        {
++            InitializeComponent();
++            PaintCanvas.SizeChanged += CanvasSizeChanged;
++            PreviewMouseDown += HandleMouseDown;
++        }
++
++        #region Old
++
++        private Mandala mandala;
++        private readonly Dictionary<IShapeObject,Shape> paintedGridElements = new Dictionary<IShapeObject, Shape>();
++
++        public Mandala Mandala
++        {
++            get { return mandala; }
++            set
++            {
++                if (mandala != null)
++                {
++                    ((INotifyPropertyChanged)mandala).PropertyChanged -= SettingsPropertyChanged;
++                    ((INotifyCollectionChanged) mandala.Elements).CollectionChanged -= ElementsCollectionChanged;
++                }
++                CancelPaintingElement(this);
++                mandala = value;
++                if (mandala != null)
++                {
++                    ((INotifyPropertyChanged)mandala).PropertyChanged += SettingsPropertyChanged;
++                    ((INotifyCollectionChanged)mandala.Elements).CollectionChanged += ElementsCollectionChanged;
++                    RepaintCanvasOld();
++                }
++            }
++        }
++
++        private void ElementsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
++        {
++            if (e.Action == NotifyCollectionChangedAction.Remove)
++            {
++                RepaintCanvasOld();
++            }
++        }
++
++        private void SettingsPropertyChanged(object sender, PropertyChangedEventArgs e)
++        {
++            if (dependentPropertyNames.Contains(e.PropertyName))
++            {
++                RepaintCanvasOld();
++            }
++        }
++
++        private void HandleMouseUp(object sender, MouseButtonEventArgs e)
++        {
++            var points = CancelPaintingElement(sender);
++            if (points != null)
++            {
++                mandala.Elements.Add(new MandalaPolygonElement("Getrokken lijn")
++                {
++                    Points = CreateRelativePointsArray(points),
++                    StrokeColor = Mandala.CurrentElementColor,
++                    StrokeThickness = Mandala.CurrentElementStrokeThickness,
++                    NumberOfDubplications = Mandala.MandalaGridResolution
++                });
++            }
++            RepaintCanvasOld();
++        }
++
++        private void HandleMouseMove(object sender, MouseEventArgs e)
++        {
++            if (!paintingNewElement)
++            {
++                return;
++            }
++
++            var point = e.GetPosition(PaintCanvas);
++            var relativePoint = CreateRelativePointsArray(new[] { point }).FirstOrDefault();
++            if (Math.Sqrt(Math.Pow(relativePoint.X, 2) + Math.Pow(relativePoint.Y, 2)) > 1.0)
++            {
++                var points = CancelPaintingElement(sender);
++                if (points != null)
++                {
++                    mandala.Elements.Add(new MandalaPolygonElement("Getrokken lijn")
++                    {
++                        Points = CreateRelativePointsArray(points),
++                        StrokeColor = Mandala.CurrentElementColor,
++                        StrokeThickness = Mandala.CurrentElementStrokeThickness,
++                        NumberOfDubplications = Mandala.MandalaGridResolution
++                    });
++                }
++                RepaintCanvasOld();
++                return;
++            }
++            newElementPoints.Add(point);
++
++            RepaintCanvasOld();
++        }
++
++        private void HandleMouseDown(object sender, MouseButtonEventArgs e)
++        {
++            CancelPaintingElement(null);
++            if (e.LeftButton != MouseButtonState.Pressed)
++            {
++                return;
++            }
++
++            paintingNewElement = true;
++            PreviewMouseMove += HandleMouseMove;
++            PreviewMouseUp += HandleMouseUp;
++            newElementPoints = new List<Point> { e.GetPosition(PaintCanvas) };
++            ((UIElement)sender).CaptureMouse();
++        }
++
++        
++        private IEnumerable<Point> CreateRelativePointsArray(IEnumerable<Point> points)
++        {
++            var list = new List<Point>();
++            foreach (var point in points)
++            {
++                list.Add(new Point((point.X - CanvasCenter.X)/CanvasRadius, (point.Y - CanvasCenter.Y) / CanvasRadius));
++            }
++            return list;
++        }
++        
++        private IList<Point> CancelPaintingElement(object sender)
++        {
++            if (sender != null)
++            {
++                PreviewMouseMove -= HandleMouseMove;
++                PreviewMouseUp -= HandleMouseUp;
++                ((UIElement) sender).ReleaseMouseCapture();
++            }
++            if (paintingNewElement && newElementPoints != null && newElementPoints.Count > 1)
++            {
++                var points = newElementPoints.ToList();
++                paintingNewElement = false;
++                newElementPoints = null;
++                return points;
++            }
++            paintingNewElement = false;
++            newElementPoints = null;
++            return null;
++        }
++
++        public void RepaintCanvasOld()
++        {
++            PaintCanvas.Children.Clear();
++            if (Mandala.ShowGrid)
++            {
++                AddGridElements();
++            }
++            AddPaintedElements();
++            AddPaintedElement();
++        }
++
++        private void AddPaintedElements()
++        {
++            foreach (var element in mandala.Elements.OfType<MandalaPolygonElement>())
++            {
++                var polyLine = new Polyline
++                {
++                    Points = new PointCollection(CreateRelatedPointsArray(element.Points)),
++                    Stroke = new SolidColorBrush(element.StrokeColor),
++                    StrokeThickness = element.StrokeThickness
++                };
++                PaintMandalaObject(polyLine, 0, 0, PaintCanvas.ActualWidth / 2.0, PaintCanvas.ActualHeight / 2.0, element.NumberOfDubplications);
++            }
++        }
++
++        private IEnumerable<Point> CreateRelatedPointsArray(IEnumerable<Point> elementPoints)
++        {
++            var list = new List<Point>();
++            foreach (var point in elementPoints)
++            {
++                list.Add(new Point(CanvasCenter.X + point.X*CanvasRadius, CanvasCenter.Y + point.Y * CanvasRadius));
++            }
++            return list;
++        }
++
++        private void AddPaintedElement()
++        {
++            if (paintingNewElement && newElementPoints != null && newElementPoints.Count > 1)
++            {
++                var polyLine = new Polyline
++                {
++                    Points = new PointCollection(newElementPoints),
++                    Stroke = new SolidColorBrush(Mandala.CurrentElementColor),
++                    StrokeThickness = Mandala.CurrentElementStrokeThickness,
++                    StrokeDashArray = new DoubleCollection(new[] { 2.0, 2 }),
++                };
++                PaintMandalaObject(polyLine, 0, 0, PaintCanvas.ActualWidth / 2.0, PaintCanvas.ActualHeight / 2.0);
++            }
++        }
++
++        private void AddGridElements()
++        {
++            return;
++            if (CanvasRadius < 1)
++            {
++                return;
++            }
++
++            var topCanvasMargin = (PaintCanvas.ActualHeight - CanvasRadius * 2.0) / 2.0;
++
++            var line = new Line
++            {
++                X1 = 0,
++                X2 = 0,
++                Y1 = 0,
++                Y2 = CanvasRadius,
++                Stroke = new SolidColorBrush(Mandala.GridBrushStrokeColor),
++                StrokeThickness = Mandala.GridBrushStrokeThickness,
++                StrokeDashArray = new DoubleCollection(new[] { 2.0, 2 }),
++            };
++            PaintMandalaObject(line,CanvasCenter.X, topCanvasMargin, 0, CanvasCenter.Y);
++
++            for (int i = 0; i < Mandala.CircularGridResolution + 1; i++)
++            {
++                var gridLineRadius = CanvasRadius / Mandala.CircularGridResolution * i;
++                var gridLine = new Ellipse
++                {
++                    StrokeThickness = Mandala.GridBrushStrokeThickness,
++                    StrokeDashArray = new DoubleCollection(new[] { 2.0, 2 }),
++                    Stroke = new SolidColorBrush(Mandala.GridBrushStrokeColor),
++                    Width = gridLineRadius * 2,
++                    Height = gridLineRadius * 2,
++                };
++
++                var leftCanvasMargin = (PaintCanvas.ActualWidth - gridLineRadius * 2.0) / 2.0;
++                topCanvasMargin = (PaintCanvas.ActualHeight - gridLineRadius * 2.0) / 2.0;
++                
++                AlignAndAddElementToCanvas(gridLine, leftCanvasMargin, topCanvasMargin);
++            }
++        }
++
++
++        private void PaintMandalaObject(UIElement uiElement, double left, double top, double rotationCenterLeft, double rotationCenterTop, int numberOfDuplications = -1)
++        {
++            if (numberOfDuplications == -1)
++            {
++                numberOfDuplications = Mandala.MandalaGridResolution;
++            }
++
++            var dAngle = 360.0 / numberOfDuplications;
++
++            for (int i = 0; i < numberOfDuplications; i++)
++            {
++                var newElement = CloneElement(uiElement);
++                newElement.RenderTransform = new RotateTransform(i * dAngle, rotationCenterLeft, rotationCenterTop);
++                
++                AlignAndAddElementToCanvas(newElement, left, top);
++            }
++        }
++
++        private static UIElement CloneElement(UIElement orig)
++        {
++
++            if (orig == null)
++            {
++                return null;
++            }
++
++            string s = XamlWriter.Save(orig);
++
++            StringReader stringReader = new StringReader(s);
++
++            XmlReader xmlReader = XmlReader.Create(stringReader, new XmlReaderSettings());
++
++            return (UIElement)XamlReader.Load(xmlReader);
++        }
++
++        private void AlignAndAddElementToCanvas(UIElement uiElement, double left, double top)
++        {
++            Canvas.SetTop(uiElement, top);
++            Canvas.SetLeft(uiElement, left);
++            PaintCanvas.Children.Add(uiElement);
++        }
++
++        /*private void CanvasSizeChanged(object sender, SizeChangedEventArgs e)
++        {
++            RepaintCanvasOld();
++        }*/
++        #endregion
++
++        public MandalaGameViewModel ViewModel
++        {
++            get { return this.DataContext as MandalaGameViewModel; }
++            set
++            {
++                if (ViewModel != null)
++                {
++                    ViewModel.GridShapes.CollectionChanged -= GridShapesCollectionChanged;
++                    ViewModel.ElementShapes.CollectionChanged -= ElementCollectionChanged;
++                }
++
++                this.DataContext = value;
++
++                if (ViewModel != null)
++                {
++                    ViewModel.GridShapes.CollectionChanged += GridShapesCollectionChanged;
++                    ViewModel.ElementShapes.CollectionChanged += ElementCollectionChanged;
++                }
++
++                RepaintCanvas();
++            }
++        }
++
++        private double CanvasRadius => Math.Min(PaintCanvas.ActualWidth, PaintCanvas.ActualHeight) / 2.0;
++
++        private Point CanvasCenter => new Point(PaintCanvas.ActualWidth / 2.0, PaintCanvas.ActualHeight / 2.0);
++
++        private void RepaintCanvas()
++        {
++            PaintCanvas.Children.Clear();
++
++            AddGridShapes(ViewModel.GridShapes);
++            // TODO: Add element shapes
++        }
++
++        private void ElementCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
++        {
++            throw new NotImplementedException();
++        }
++
++        private void GridShapesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
++        {
++            switch (e.Action)
++            {
++                case NotifyCollectionChangedAction.Remove:
++                    RemoveGridShapes(e.OldItems.OfType<IShapeObject>());
++                    break;
++                case NotifyCollectionChangedAction.Add:
++                    AddGridShapes(e.NewItems.OfType<IShapeObject>());
++                    break;
++            }
++        }
++
++        private void RemoveGridShapes(IEnumerable<IShapeObject> items)
++        {
++            foreach (var item in items.Where(paintedGridElements.ContainsKey))
++            {
++                PaintCanvas.Children.Remove(paintedGridElements[item]);
++                paintedGridElements.Remove(item);
++            }
++        }
++
++        private void AddGridShapes(IEnumerable<IShapeObject> elements)
++        {
++            foreach (var element in elements)
++            {
++                Shape newShape = null;
++                var lineShape = element as LineShapeObject;
++                var ellipseShape = element as EllipseShapeObject;
++                if (lineShape != null)
++                {
++                    newShape = ConvertToLine(lineShape);
++                }
++                else if (ellipseShape != null)
++                {
++                    newShape = ConvertToEllipse(ellipseShape);
++                }
++                else
++                {
++                    throw new NotImplementedException();
++                }
++
++                if (newShape != null)
++                {
++                    paintedGridElements[element] = newShape;
++                    PaintCanvas.Children.Insert(0,newShape);
++                }
++            }
++        }
++
++        private Shape ConvertToEllipse(EllipseShapeObject ellipseShape)
++        {
++            return new Ellipse
++            {
++                Width = ellipseShape.Radius * 2,
++                Height = ellipseShape.Radius * 2,
++                Stroke = new SolidColorBrush(ellipseShape.Color),
++                StrokeThickness = ellipseShape.StrokeThickness,
++                StrokeDashArray = ellipseShape.StrokeDashArray,
++                RenderTransform = ConvertRenderTransform(ellipseShape.RenderTransform)
++            };
++        }
++
++        private Line ConvertToLine(LineShapeObject line)
++        {
++            return new Line
++            {
++                X1 = line.X1 * CanvasRadius,
++                X2 = line.X2 * CanvasRadius,
++                Y1 = line.Y1 * CanvasRadius,
++                Y2 = line.Y2 * CanvasRadius,
++                Stroke = new SolidColorBrush(line.Color),
++                StrokeThickness = line.StrokeThickness,
++                StrokeDashArray = line.StrokeDashArray,
++                RenderTransform = ConvertRenderTransform(line.RenderTransform)
++            };
++        }
++
++        private Transform ConvertRenderTransform(Transform renderTransform)
++        {
++            if (renderTransform == null)
++            {
++                return null;
++            }
++
++            RotateTransform rotateTransform = renderTransform as RotateTransform;
++            if (rotateTransform != null)
++            {
++                return new RotateTransform(rotateTransform.Angle,CanvasCenter.X,CanvasCenter.Y);
++            }
++            throw new NotImplementedException();
++        }
++
++        private void CanvasSizeChanged(object sender, SizeChangedEventArgs e)
++        {
++            foreach (KeyValuePair<IShapeObject, Shape> element in paintedGridElements)
++            {
++                var lineShape = element.Key as LineShapeObject;
++                if (lineShape != null)
++                {
++                    var lineElement = paintedGridElements[element.Key] as Line;
++                    lineElement.X1 = lineShape.X1 * CanvasRadius;
++                    lineElement.X2 = lineShape.X2 * CanvasRadius;
++                    lineElement.Y1 = lineShape.Y1 * CanvasRadius;
++                    lineElement.Y2 = lineShape.Y2 * CanvasRadius;
++                    lineElement.RenderTransform = ConvertRenderTransform(lineShape.RenderTransform);
++                }
++            }
++            PaintCanvas.InvalidateVisual();
++        }
++    }
++}
+Index: EduGames/Games/MandalaGame/View/MandalaRibbonView.xaml
+===================================================================
+--- EduGames/Games/MandalaGame/View/MandalaRibbonView.xaml	(revision 117)
++++ EduGames/Games/MandalaGame/View/MandalaRibbonView.xaml	(working copy)
+@@ -4,9 +4,7 @@
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+              xmlns:fluent="urn:fluent-ribbon"
+-             xmlns:mandalaGame="clr-namespace:EduGames.Games.MandalaGame"
+              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+-             xmlns:global="clr-namespace:"
+              xmlns:modelView="clr-namespace:EduGames.Games.MandalaGame.ModelView"
+              xmlns:view="clr-namespace:EduGames.Games.MandalaGame.View"
+              mc:Ignorable="d">
+@@ -72,7 +70,7 @@
+                         IsNoColorButtonVisible="False" 
+                         Mode="ThemeColors" 
+                         SelectedColorChanged="OnSelectedColorChanged" 
+-                        Tag="GridStrokeColor">
++                        Tag="GridColor">
+                         <!--TODO: Enable this once fluent works and remove code behind-->
+                         <!--     <i:Interaction.Triggers>
+                             <i:EventTrigger EventName="SelectedColorChanged">
+@@ -135,7 +133,7 @@
+                         IsNoColorButtonVisible="False" 
+                         Mode="ThemeColors" 
+                         SelectedColorChanged="OnSelectedColorChanged" 
+-                        Tag="ElementBrushStrokeColor">
++                        Tag="ElementBrushColor">
+                         <!--TODO: Enable this once fluent works and remove code behind-->
+                         <!--     <i:Interaction.Triggers>
+                             <i:EventTrigger EventName="SelectedColorChanged">
+Index: EduGames/Helpers/SizeObserver.cs
+===================================================================
+--- EduGames/Helpers/SizeObserver.cs	(revision 0)
++++ EduGames/Helpers/SizeObserver.cs	(working copy)
+@@ -0,0 +1,77 @@
++﻿using System.Windows;
++
++public static class SizeObserver
++{
++    public static readonly DependencyProperty ObserveProperty = DependencyProperty.RegisterAttached(
++        "Observe",
++        typeof(bool),
++        typeof(SizeObserver),
++        new FrameworkPropertyMetadata(OnObserveChanged));
++
++    public static readonly DependencyProperty ObservedWidthProperty = DependencyProperty.RegisterAttached(
++        "ObservedWidth",
++        typeof(double),
++        typeof(SizeObserver));
++
++    public static readonly DependencyProperty ObservedHeightProperty = DependencyProperty.RegisterAttached(
++        "ObservedHeight",
++        typeof(double),
++        typeof(SizeObserver));
++
++    public static bool GetObserve(FrameworkElement frameworkElement)
++    {
++        return (bool)frameworkElement.GetValue(ObserveProperty);
++    }
++
++    public static void SetObserve(FrameworkElement frameworkElement, bool observe)
++    {
++        frameworkElement.SetValue(ObserveProperty, observe);
++    }
++
++    public static double GetObservedWidth(FrameworkElement frameworkElement)
++    {
++        return (double)frameworkElement.GetValue(ObservedWidthProperty);
++    }
++
++    public static void SetObservedWidth(FrameworkElement frameworkElement, double observedWidth)
++    {
++        frameworkElement.SetValue(ObservedWidthProperty, observedWidth);
++    }
++
++    public static double GetObservedHeight(FrameworkElement frameworkElement)
++    {
++        return (double)frameworkElement.GetValue(ObservedHeightProperty);
++    }
++
++    public static void SetObservedHeight(FrameworkElement frameworkElement, double observedHeight)
++    {
++        frameworkElement.SetValue(ObservedHeightProperty, observedHeight);
++    }
++
++    private static void OnObserveChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
++    {
++        var frameworkElement = (FrameworkElement)dependencyObject;
++
++        if ((bool)e.NewValue)
++        {
++            frameworkElement.SizeChanged += OnFrameworkElementSizeChanged;
++            UpdateObservedSizesForFrameworkElement(frameworkElement);
++        }
++        else
++        {
++            frameworkElement.SizeChanged -= OnFrameworkElementSizeChanged;
++        }
++    }
++
++    private static void OnFrameworkElementSizeChanged(object sender, SizeChangedEventArgs e)
++    {
++        UpdateObservedSizesForFrameworkElement((FrameworkElement)sender);
++    }
++
++    private static void UpdateObservedSizesForFrameworkElement(FrameworkElement frameworkElement)
++    {
++        // WPF 4.0 onwards
++        frameworkElement.SetCurrentValue(ObservedWidthProperty, frameworkElement.ActualWidth);
++        frameworkElement.SetCurrentValue(ObservedHeightProperty, frameworkElement.ActualHeight);
++    }
++}
+\ No newline at end of file
+Index: EduGames/Properties/Annotations.cs
+===================================================================
+--- EduGames/Properties/Annotations.cs	(revision 0)
++++ EduGames/Properties/Annotations.cs	(working copy)
+@@ -0,0 +1,1048 @@
++﻿/* MIT License
++
++Copyright (c) 2016 JetBrains http://www.jetbrains.com
++
++Permission is hereby granted, free of charge, to any person obtaining a copy
++of this software and associated documentation files (the "Software"), to deal
++in the Software without restriction, including without limitation the rights
++to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++copies of the Software, and to permit persons to whom the Software is
++furnished to do so, subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in all
++copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++SOFTWARE. */
++
++using System;
++
++#pragma warning disable 1591
++// ReSharper disable UnusedMember.Global
++// ReSharper disable MemberCanBePrivate.Global
++// ReSharper disable UnusedAutoPropertyAccessor.Global
++// ReSharper disable IntroduceOptionalParameters.Global
++// ReSharper disable MemberCanBeProtected.Global
++// ReSharper disable InconsistentNaming
++
++namespace EduGames.Annotations
++{
++  /// <summary>
++  /// Indicates that the value of the marked element could be <c>null</c> sometimes,
++  /// so the check for <c>null</c> is necessary before its usage.
++  /// </summary>
++  /// <example><code>
++  /// [CanBeNull] object Test() => null;
++  /// 
++  /// void UseTest() {
++  ///   var p = Test();
++  ///   var s = p.ToString(); // Warning: Possible 'System.NullReferenceException'
++  /// }
++  /// </code></example>
++  [AttributeUsage(
++    AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property |
++    AttributeTargets.Delegate | AttributeTargets.Field | AttributeTargets.Event |
++    AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.GenericParameter)]
++  public sealed class CanBeNullAttribute : Attribute { }
++
++  /// <summary>
++  /// Indicates that the value of the marked element could never be <c>null</c>.
++  /// </summary>
++  /// <example><code>
++  /// [NotNull] object Foo() {
++  ///   return null; // Warning: Possible 'null' assignment
++  /// }
++  /// </code></example>
++  [AttributeUsage(
++    AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property |
++    AttributeTargets.Delegate | AttributeTargets.Field | AttributeTargets.Event |
++    AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.GenericParameter)]
++  public sealed class NotNullAttribute : Attribute { }
++
++  /// <summary>
++  /// Can be appplied to symbols of types derived from IEnumerable as well as to symbols of Task
++  /// and Lazy classes to indicate that the value of a collection item, of the Task.Result property
++  /// or of the Lazy.Value property can never be null.
++  /// </summary>
++  [AttributeUsage(
++    AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property |
++    AttributeTargets.Delegate | AttributeTargets.Field)]
++  public sealed class ItemNotNullAttribute : Attribute { }
++
++  /// <summary>
++  /// Can be appplied to symbols of types derived from IEnumerable as well as to symbols of Task
++  /// and Lazy classes to indicate that the value of a collection item, of the Task.Result property
++  /// or of the Lazy.Value property can be null.
++  /// </summary>
++  [AttributeUsage(
++    AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property |
++    AttributeTargets.Delegate | AttributeTargets.Field)]
++  public sealed class ItemCanBeNullAttribute : Attribute { }
++
++  /// <summary>
++  /// Indicates that the marked method builds string by format pattern and (optional) arguments.
++  /// Parameter, which contains format string, should be given in constructor. The format string
++  /// should be in <see cref="string.Format(IFormatProvider,string,object[])"/>-like form.
++  /// </summary>
++  /// <example><code>
++  /// [StringFormatMethod("message")]
++  /// void ShowError(string message, params object[] args) { /* do something */ }
++  /// 
++  /// void Foo() {
++  ///   ShowError("Failed: {0}"); // Warning: Non-existing argument in format string
++  /// }
++  /// </code></example>
++  [AttributeUsage(
++    AttributeTargets.Constructor | AttributeTargets.Method |
++    AttributeTargets.Property | AttributeTargets.Delegate)]
++  public sealed class StringFormatMethodAttribute : Attribute
++  {
++    /// <param name="formatParameterName">
++    /// Specifies which parameter of an annotated method should be treated as format-string
++    /// </param>
++    public StringFormatMethodAttribute([NotNull] string formatParameterName)
++    {
++      FormatParameterName = formatParameterName;
++    }
++
++    [NotNull] public string FormatParameterName { get; private set; }
++  }
++
++  /// <summary>
++  /// For a parameter that is expected to be one of the limited set of values.
++  /// Specify fields of which type should be used as values for this parameter.
++  /// </summary>
++  [AttributeUsage(
++    AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.Field,
++    AllowMultiple = true)]
++  public sealed class ValueProviderAttribute : Attribute
++  {
++    public ValueProviderAttribute([NotNull] string name)
++    {
++      Name = name;
++    }
++
++    [NotNull] public string Name { get; private set; }
++  }
++
++  /// <summary>
++  /// Indicates that the function argument should be string literal and match one
++  /// of the parameters of the caller function. For example, ReSharper annotates
++  /// the parameter of <see cref="System.ArgumentNullException"/>.
++  /// </summary>
++  /// <example><code>
++  /// void Foo(string param) {
++  ///   if (param == null)
++  ///     throw new ArgumentNullException("par"); // Warning: Cannot resolve symbol
++  /// }
++  /// </code></example>
++  [AttributeUsage(AttributeTargets.Parameter)]
++  public sealed class InvokerParameterNameAttribute : Attribute { }
++
++  /// <summary>
++  /// Indicates that the method is contained in a type that implements
++  /// <c>System.ComponentModel.INotifyPropertyChanged</c> interface and this method
++  /// is used to notify that some property value changed.
++  /// </summary>
++  /// <remarks>
++  /// The method should be non-static and conform to one of the supported signatures:
++  /// <list>
++  /// <item><c>NotifyChanged(string)</c></item>
++  /// <item><c>NotifyChanged(params string[])</c></item>
++  /// <item><c>NotifyChanged{T}(Expression{Func{T}})</c></item>
++  /// <item><c>NotifyChanged{T,U}(Expression{Func{T,U}})</c></item>
++  /// <item><c>SetProperty{T}(ref T, T, string)</c></item>
++  /// </list>
++  /// </remarks>
++  /// <example><code>
++  /// public class Foo : INotifyPropertyChanged {
++  ///   public event PropertyChangedEventHandler PropertyChanged;
++  /// 
++  ///   [NotifyPropertyChangedInvocator]
++  ///   protected virtual void NotifyChanged(string propertyName) { ... }
++  ///
++  ///   string _name;
++  /// 
++  ///   public string Name {
++  ///     get { return _name; }
++  ///     set { _name = value; NotifyChanged("LastName"); /* Warning */ }
++  ///   }
++  /// }
++  /// </code>
++  /// Examples of generated notifications:
++  /// <list>
++  /// <item><c>NotifyChanged("Property")</c></item>
++  /// <item><c>NotifyChanged(() =&gt; Property)</c></item>
++  /// <item><c>NotifyChanged((VM x) =&gt; x.Property)</c></item>
++  /// <item><c>SetProperty(ref myField, value, "Property")</c></item>
++  /// </list>
++  /// </example>
++  [AttributeUsage(AttributeTargets.Method)]
++  public sealed class NotifyPropertyChangedInvocatorAttribute : Attribute
++  {
++    public NotifyPropertyChangedInvocatorAttribute() { }
++    public NotifyPropertyChangedInvocatorAttribute([NotNull] string parameterName)
++    {
++      ParameterName = parameterName;
++    }
++
++    [CanBeNull] public string ParameterName { get; private set; }
++  }
++
++  /// <summary>
++  /// Describes dependency between method input and output.
++  /// </summary>
++  /// <syntax>
++  /// <p>Function Definition Table syntax:</p>
++  /// <list>
++  /// <item>FDT      ::= FDTRow [;FDTRow]*</item>
++  /// <item>FDTRow   ::= Input =&gt; Output | Output &lt;= Input</item>
++  /// <item>Input    ::= ParameterName: Value [, Input]*</item>
++  /// <item>Output   ::= [ParameterName: Value]* {halt|stop|void|nothing|Value}</item>
++  /// <item>Value    ::= true | false | null | notnull | canbenull</item>
++  /// </list>
++  /// If method has single input parameter, it's name could be omitted.<br/>
++  /// Using <c>halt</c> (or <c>void</c>/<c>nothing</c>, which is the same) for method output
++  /// means that the methos doesn't return normally (throws or terminates the process).<br/>
++  /// Value <c>canbenull</c> is only applicable for output parameters.<br/>
++  /// You can use multiple <c>[ContractAnnotation]</c> for each FDT row, or use single attribute
++  /// with rows separated by semicolon. There is no notion of order rows, all rows are checked
++  /// for applicability and applied per each program state tracked by R# analysis.<br/>
++  /// </syntax>
++  /// <examples><list>
++  /// <item><code>
++  /// [ContractAnnotation("=&gt; halt")]
++  /// public void TerminationMethod()
++  /// </code></item>
++  /// <item><code>
++  /// [ContractAnnotation("halt &lt;= condition: false")]
++  /// public void Assert(bool condition, string text) // regular assertion method
++  /// </code></item>
++  /// <item><code>
++  /// [ContractAnnotation("s:null =&gt; true")]
++  /// public bool IsNullOrEmpty(string s) // string.IsNullOrEmpty()
++  /// </code></item>
++  /// <item><code>
++  /// // A method that returns null if the parameter is null,
++  /// // and not null if the parameter is not null
++  /// [ContractAnnotation("null =&gt; null; notnull =&gt; notnull")]
++  /// public object Transform(object data) 
++  /// </code></item>
++  /// <item><code>
++  /// [ContractAnnotation("=&gt; true, result: notnull; =&gt; false, result: null")]
++  /// public bool TryParse(string s, out Person result)
++  /// </code></item>
++  /// </list></examples>
++  [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
++  public sealed class ContractAnnotationAttribute : Attribute
++  {
++    public ContractAnnotationAttribute([NotNull] string contract)
++      : this(contract, false) { }
++
++    public ContractAnnotationAttribute([NotNull] string contract, bool forceFullStates)
++    {
++      Contract = contract;
++      ForceFullStates = forceFullStates;
++    }
++
++    [NotNull] public string Contract { get; private set; }
++
++    public bool ForceFullStates { get; private set; }
++  }
++
++  /// <summary>
++  /// Indicates that marked element should be localized or not.
++  /// </summary>
++  /// <example><code>
++  /// [LocalizationRequiredAttribute(true)]
++  /// class Foo {
++  ///   string str = "my string"; // Warning: Localizable string
++  /// }
++  /// </code></example>
++  [AttributeUsage(AttributeTargets.All)]
++  public sealed class LocalizationRequiredAttribute : Attribute
++  {
++    public LocalizationRequiredAttribute() : this(true) { }
++
++    public LocalizationRequiredAttribute(bool required)
++    {
++      Required = required;
++    }
++
++    public bool Required { get; private set; }
++  }
++
++  /// <summary>
++  /// Indicates that the value of the marked type (or its derivatives)
++  /// cannot be compared using '==' or '!=' operators and <c>Equals()</c>
++  /// should be used instead. However, using '==' or '!=' for comparison
++  /// with <c>null</c> is always permitted.
++  /// </summary>
++  /// <example><code>
++  /// [CannotApplyEqualityOperator]
++  /// class NoEquality { }
++  /// 
++  /// class UsesNoEquality {
++  ///   void Test() {
++  ///     var ca1 = new NoEquality();
++  ///     var ca2 = new NoEquality();
++  ///     if (ca1 != null) { // OK
++  ///       bool condition = ca1 == ca2; // Warning
++  ///     }
++  ///   }
++  /// }
++  /// </code></example>
++  [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Class | AttributeTargets.Struct)]
++  public sealed class CannotApplyEqualityOperatorAttribute : Attribute { }
++
++  /// <summary>
++  /// When applied to a target attribute, specifies a requirement for any type marked
++  /// with the target attribute to implement or inherit specific type or types.
++  /// </summary>
++  /// <example><code>
++  /// [BaseTypeRequired(typeof(IComponent)] // Specify requirement
++  /// class ComponentAttribute : Attribute { }
++  /// 
++  /// [Component] // ComponentAttribute requires implementing IComponent interface
++  /// class MyComponent : IComponent { }
++  /// </code></example>
++  [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
++  [BaseTypeRequired(typeof(Attribute))]
++  public sealed class BaseTypeRequiredAttribute : Attribute
++  {
++    public BaseTypeRequiredAttribute([NotNull] Type baseType)
++    {
++      BaseType = baseType;
++    }
++
++    [NotNull] public Type BaseType { get; private set; }
++  }
++
++  /// <summary>
++  /// Indicates that the marked symbol is used implicitly (e.g. via reflection, in external library),
++  /// so this symbol will not be marked as unused (as well as by other usage inspections).
++  /// </summary>
++  [AttributeUsage(AttributeTargets.All)]
++  public sealed class UsedImplicitlyAttribute : Attribute
++  {
++    public UsedImplicitlyAttribute()
++      : this(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.Default) { }
++
++    public UsedImplicitlyAttribute(ImplicitUseKindFlags useKindFlags)
++      : this(useKindFlags, ImplicitUseTargetFlags.Default) { }
++
++    public UsedImplicitlyAttribute(ImplicitUseTargetFlags targetFlags)
++      : this(ImplicitUseKindFlags.Default, targetFlags) { }
++
++    public UsedImplicitlyAttribute(ImplicitUseKindFlags useKindFlags, ImplicitUseTargetFlags targetFlags)
++    {
++      UseKindFlags = useKindFlags;
++      TargetFlags = targetFlags;
++    }
++
++    public ImplicitUseKindFlags UseKindFlags { get; private set; }
++
++    public ImplicitUseTargetFlags TargetFlags { get; private set; }
++  }
++
++  /// <summary>
++  /// Should be used on attributes and causes ReSharper to not mark symbols marked with such attributes
++  /// as unused (as well as by other usage inspections)
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Class | AttributeTargets.GenericParameter)]
++  public sealed class MeansImplicitUseAttribute : Attribute
++  {
++    public MeansImplicitUseAttribute()
++      : this(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.Default) { }
++
++    public MeansImplicitUseAttribute(ImplicitUseKindFlags useKindFlags)
++      : this(useKindFlags, ImplicitUseTargetFlags.Default) { }
++
++    public MeansImplicitUseAttribute(ImplicitUseTargetFlags targetFlags)
++      : this(ImplicitUseKindFlags.Default, targetFlags) { }
++
++    public MeansImplicitUseAttribute(ImplicitUseKindFlags useKindFlags, ImplicitUseTargetFlags targetFlags)
++    {
++      UseKindFlags = useKindFlags;
++      TargetFlags = targetFlags;
++    }
++
++    [UsedImplicitly] public ImplicitUseKindFlags UseKindFlags { get; private set; }
++
++    [UsedImplicitly] public ImplicitUseTargetFlags TargetFlags { get; private set; }
++  }
++
++  [Flags]
++  public enum ImplicitUseKindFlags
++  {
++    Default = Access | Assign | InstantiatedWithFixedConstructorSignature,
++    /// <summary>Only entity marked with attribute considered used.</summary>
++    Access = 1,
++    /// <summary>Indicates implicit assignment to a member.</summary>
++    Assign = 2,
++    /// <summary>
++    /// Indicates implicit instantiation of a type with fixed constructor signature.
++    /// That means any unused constructor parameters won't be reported as such.
++    /// </summary>
++    InstantiatedWithFixedConstructorSignature = 4,
++    /// <summary>Indicates implicit instantiation of a type.</summary>
++    InstantiatedNoFixedConstructorSignature = 8,
++  }
++
++  /// <summary>
++  /// Specify what is considered used implicitly when marked
++  /// with <see cref="MeansImplicitUseAttribute"/> or <see cref="UsedImplicitlyAttribute"/>.
++  /// </summary>
++  [Flags]
++  public enum ImplicitUseTargetFlags
++  {
++    Default = Itself,
++    Itself = 1,
++    /// <summary>Members of entity marked with attribute are considered used.</summary>
++    Members = 2,
++    /// <summary>Entity marked with attribute and all its members considered used.</summary>
++    WithMembers = Itself | Members
++  }
++
++  /// <summary>
++  /// This attribute is intended to mark publicly available API
++  /// which should not be removed and so is treated as used.
++  /// </summary>
++  [MeansImplicitUse(ImplicitUseTargetFlags.WithMembers)]
++  public sealed class PublicAPIAttribute : Attribute
++  {
++    public PublicAPIAttribute() { }
++
++    public PublicAPIAttribute([NotNull] string comment)
++    {
++      Comment = comment;
++    }
++
++    [CanBeNull] public string Comment { get; private set; }
++  }
++
++  /// <summary>
++  /// Tells code analysis engine if the parameter is completely handled when the invoked method is on stack.
++  /// If the parameter is a delegate, indicates that delegate is executed while the method is executed.
++  /// If the parameter is an enumerable, indicates that it is enumerated while the method is executed.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Parameter)]
++  public sealed class InstantHandleAttribute : Attribute { }
++
++  /// <summary>
++  /// Indicates that a method does not make any observable state changes.
++  /// The same as <c>System.Diagnostics.Contracts.PureAttribute</c>.
++  /// </summary>
++  /// <example><code>
++  /// [Pure] int Multiply(int x, int y) => x * y;
++  /// 
++  /// void M() {
++  ///   Multiply(123, 42); // Waring: Return value of pure method is not used
++  /// }
++  /// </code></example>
++  [AttributeUsage(AttributeTargets.Method)]
++  public sealed class PureAttribute : Attribute { }
++
++  /// <summary>
++  /// Indicates that the return value of method invocation must be used.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Method)]
++  public sealed class MustUseReturnValueAttribute : Attribute
++  {
++    public MustUseReturnValueAttribute() { }
++
++    public MustUseReturnValueAttribute([NotNull] string justification)
++    {
++      Justification = justification;
++    }
++
++    [CanBeNull] public string Justification { get; private set; }
++  }
++
++  /// <summary>
++  /// Indicates the type member or parameter of some type, that should be used instead of all other ways
++  /// to get the value that type. This annotation is useful when you have some "context" value evaluated
++  /// and stored somewhere, meaning that all other ways to get this value must be consolidated with existing one.
++  /// </summary>
++  /// <example><code>
++  /// class Foo {
++  ///   [ProvidesContext] IBarService _barService = ...;
++  /// 
++  ///   void ProcessNode(INode node) {
++  ///     DoSomething(node, node.GetGlobalServices().Bar);
++  ///     //              ^ Warning: use value of '_barService' field
++  ///   }
++  /// }
++  /// </code></example>
++  [AttributeUsage(
++    AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Parameter | AttributeTargets.Method |
++    AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Struct | AttributeTargets.GenericParameter)]
++  public sealed class ProvidesContextAttribute : Attribute { }
++
++  /// <summary>
++  /// Indicates that a parameter is a path to a file or a folder within a web project.
++  /// Path can be relative or absolute, starting from web root (~).
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Parameter)]
++  public sealed class PathReferenceAttribute : Attribute
++  {
++    public PathReferenceAttribute() { }
++
++    public PathReferenceAttribute([NotNull, PathReference] string basePath)
++    {
++      BasePath = basePath;
++    }
++
++    [CanBeNull] public string BasePath { get; private set; }
++  }
++
++  /// <summary>
++  /// An extension method marked with this attribute is processed by ReSharper code completion
++  /// as a 'Source Template'. When extension method is completed over some expression, it's source code
++  /// is automatically expanded like a template at call site.
++  /// </summary>
++  /// <remarks>
++  /// Template method body can contain valid source code and/or special comments starting with '$'.
++  /// Text inside these comments is added as source code when the template is applied. Template parameters
++  /// can be used either as additional method parameters or as identifiers wrapped in two '$' signs.
++  /// Use the <see cref="MacroAttribute"/> attribute to specify macros for parameters.
++  /// </remarks>
++  /// <example>
++  /// In this example, the 'forEach' method is a source template available over all values
++  /// of enumerable types, producing ordinary C# 'foreach' statement and placing caret inside block:
++  /// <code>
++  /// [SourceTemplate]
++  /// public static void forEach&lt;T&gt;(this IEnumerable&lt;T&gt; xs) {
++  ///   foreach (var x in xs) {
++  ///      //$ $END$
++  ///   }
++  /// }
++  /// </code>
++  /// </example>
++  [AttributeUsage(AttributeTargets.Method)]
++  public sealed class SourceTemplateAttribute : Attribute { }
++
++  /// <summary>
++  /// Allows specifying a macro for a parameter of a <see cref="SourceTemplateAttribute">source template</see>.
++  /// </summary>
++  /// <remarks>
++  /// You can apply the attribute on the whole method or on any of its additional parameters. The macro expression
++  /// is defined in the <see cref="MacroAttribute.Expression"/> property. When applied on a method, the target
++  /// template parameter is defined in the <see cref="MacroAttribute.Target"/> property. To apply the macro silently
++  /// for the parameter, set the <see cref="MacroAttribute.Editable"/> property value = -1.
++  /// </remarks>
++  /// <example>
++  /// Applying the attribute on a source template method:
++  /// <code>
++  /// [SourceTemplate, Macro(Target = "item", Expression = "suggestVariableName()")]
++  /// public static void forEach&lt;T&gt;(this IEnumerable&lt;T&gt; collection) {
++  ///   foreach (var item in collection) {
++  ///     //$ $END$
++  ///   }
++  /// }
++  /// </code>
++  /// Applying the attribute on a template method parameter:
++  /// <code>
++  /// [SourceTemplate]
++  /// public static void something(this Entity x, [Macro(Expression = "guid()", Editable = -1)] string newguid) {
++  ///   /*$ var $x$Id = "$newguid$" + x.ToString();
++  ///   x.DoSomething($x$Id); */
++  /// }
++  /// </code>
++  /// </example>
++  [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Method, AllowMultiple = true)]
++  public sealed class MacroAttribute : Attribute
++  {
++    /// <summary>
++    /// Allows specifying a macro that will be executed for a <see cref="SourceTemplateAttribute">source template</see>
++    /// parameter when the template is expanded.
++    /// </summary>
++    [CanBeNull] public string Expression { get; set; }
++
++    /// <summary>
++    /// Allows specifying which occurrence of the target parameter becomes editable when the template is deployed.
++    /// </summary>
++    /// <remarks>
++    /// If the target parameter is used several times in the template, only one occurrence becomes editable;
++    /// other occurrences are changed synchronously. To specify the zero-based index of the editable occurrence,
++    /// use values >= 0. To make the parameter non-editable when the template is expanded, use -1.
++    /// </remarks>>
++    public int Editable { get; set; }
++
++    /// <summary>
++    /// Identifies the target parameter of a <see cref="SourceTemplateAttribute">source template</see> if the
++    /// <see cref="MacroAttribute"/> is applied on a template method.
++    /// </summary>
++    [CanBeNull] public string Target { get; set; }
++  }
++
++  [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
++  public sealed class AspMvcAreaMasterLocationFormatAttribute : Attribute
++  {
++    public AspMvcAreaMasterLocationFormatAttribute([NotNull] string format)
++    {
++      Format = format;
++    }
++
++    [NotNull] public string Format { get; private set; }
++  }
++
++  [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
++  public sealed class AspMvcAreaPartialViewLocationFormatAttribute : Attribute
++  {
++    public AspMvcAreaPartialViewLocationFormatAttribute([NotNull] string format)
++    {
++      Format = format;
++    }
++
++    [NotNull] public string Format { get; private set; }
++  }
++
++  [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
++  public sealed class AspMvcAreaViewLocationFormatAttribute : Attribute
++  {
++    public AspMvcAreaViewLocationFormatAttribute([NotNull] string format)
++    {
++      Format = format;
++    }
++
++    [NotNull] public string Format { get; private set; }
++  }
++
++  [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
++  public sealed class AspMvcMasterLocationFormatAttribute : Attribute
++  {
++    public AspMvcMasterLocationFormatAttribute([NotNull] string format)
++    {
++      Format = format;
++    }
++
++    [NotNull] public string Format { get; private set; }
++  }
++
++  [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
++  public sealed class AspMvcPartialViewLocationFormatAttribute : Attribute
++  {
++    public AspMvcPartialViewLocationFormatAttribute([NotNull] string format)
++    {
++      Format = format;
++    }
++
++    [NotNull] public string Format { get; private set; }
++  }
++
++  [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
++  public sealed class AspMvcViewLocationFormatAttribute : Attribute
++  {
++    public AspMvcViewLocationFormatAttribute([NotNull] string format)
++    {
++      Format = format;
++    }
++
++    [NotNull] public string Format { get; private set; }
++  }
++
++  /// <summary>
++  /// ASP.NET MVC attribute. If applied to a parameter, indicates that the parameter
++  /// is an MVC action. If applied to a method, the MVC action name is calculated
++  /// implicitly from the context. Use this attribute for custom wrappers similar to
++  /// <c>System.Web.Mvc.Html.ChildActionExtensions.RenderAction(HtmlHelper, String)</c>.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Method)]
++  public sealed class AspMvcActionAttribute : Attribute
++  {
++    public AspMvcActionAttribute() { }
++
++    public AspMvcActionAttribute([NotNull] string anonymousProperty)
++    {
++      AnonymousProperty = anonymousProperty;
++    }
++
++    [CanBeNull] public string AnonymousProperty { get; private set; }
++  }
++
++  /// <summary>
++  /// ASP.NET MVC attribute. Indicates that a parameter is an MVC area.
++  /// Use this attribute for custom wrappers similar to
++  /// <c>System.Web.Mvc.Html.ChildActionExtensions.RenderAction(HtmlHelper, String)</c>.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Parameter)]
++  public sealed class AspMvcAreaAttribute : Attribute
++  {
++    public AspMvcAreaAttribute() { }
++
++    public AspMvcAreaAttribute([NotNull] string anonymousProperty)
++    {
++      AnonymousProperty = anonymousProperty;
++    }
++
++    [CanBeNull] public string AnonymousProperty { get; private set; }
++  }
++
++  /// <summary>
++  /// ASP.NET MVC attribute. If applied to a parameter, indicates that the parameter is
++  /// an MVC controller. If applied to a method, the MVC controller name is calculated
++  /// implicitly from the context. Use this attribute for custom wrappers similar to
++  /// <c>System.Web.Mvc.Html.ChildActionExtensions.RenderAction(HtmlHelper, String, String)</c>.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Method)]
++  public sealed class AspMvcControllerAttribute : Attribute
++  {
++    public AspMvcControllerAttribute() { }
++
++    public AspMvcControllerAttribute([NotNull] string anonymousProperty)
++    {
++      AnonymousProperty = anonymousProperty;
++    }
++
++    [CanBeNull] public string AnonymousProperty { get; private set; }
++  }
++
++  /// <summary>
++  /// ASP.NET MVC attribute. Indicates that a parameter is an MVC Master. Use this attribute
++  /// for custom wrappers similar to <c>System.Web.Mvc.Controller.View(String, String)</c>.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Parameter)]
++  public sealed class AspMvcMasterAttribute : Attribute { }
++
++  /// <summary>
++  /// ASP.NET MVC attribute. Indicates that a parameter is an MVC model type. Use this attribute
++  /// for custom wrappers similar to <c>System.Web.Mvc.Controller.View(String, Object)</c>.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Parameter)]
++  public sealed class AspMvcModelTypeAttribute : Attribute { }
++
++  /// <summary>
++  /// ASP.NET MVC attribute. If applied to a parameter, indicates that the parameter is an MVC
++  /// partial view. If applied to a method, the MVC partial view name is calculated implicitly
++  /// from the context. Use this attribute for custom wrappers similar to
++  /// <c>System.Web.Mvc.Html.RenderPartialExtensions.RenderPartial(HtmlHelper, String)</c>.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Method)]
++  public sealed class AspMvcPartialViewAttribute : Attribute { }
++
++  /// <summary>
++  /// ASP.NET MVC attribute. Allows disabling inspections for MVC views within a class or a method.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
++  public sealed class AspMvcSuppressViewErrorAttribute : Attribute { }
++
++  /// <summary>
++  /// ASP.NET MVC attribute. Indicates that a parameter is an MVC display template.
++  /// Use this attribute for custom wrappers similar to 
++  /// <c>System.Web.Mvc.Html.DisplayExtensions.DisplayForModel(HtmlHelper, String)</c>.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Parameter)]
++  public sealed class AspMvcDisplayTemplateAttribute : Attribute { }
++
++  /// <summary>
++  /// ASP.NET MVC attribute. Indicates that a parameter is an MVC editor template.
++  /// Use this attribute for custom wrappers similar to
++  /// <c>System.Web.Mvc.Html.EditorExtensions.EditorForModel(HtmlHelper, String)</c>.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Parameter)]
++  public sealed class AspMvcEditorTemplateAttribute : Attribute { }
++
++  /// <summary>
++  /// ASP.NET MVC attribute. Indicates that a parameter is an MVC template.
++  /// Use this attribute for custom wrappers similar to
++  /// <c>System.ComponentModel.DataAnnotations.UIHintAttribute(System.String)</c>.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Parameter)]
++  public sealed class AspMvcTemplateAttribute : Attribute { }
++
++  /// <summary>
++  /// ASP.NET MVC attribute. If applied to a parameter, indicates that the parameter
++  /// is an MVC view component. If applied to a method, the MVC view name is calculated implicitly
++  /// from the context. Use this attribute for custom wrappers similar to
++  /// <c>System.Web.Mvc.Controller.View(Object)</c>.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Method)]
++  public sealed class AspMvcViewAttribute : Attribute { }
++
++  /// <summary>
++  /// ASP.NET MVC attribute. If applied to a parameter, indicates that the parameter
++  /// is an MVC view component name.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Parameter)]
++  public sealed class AspMvcViewComponentAttribute : Attribute { }
++
++  /// <summary>
++  /// ASP.NET MVC attribute. If applied to a parameter, indicates that the parameter
++  /// is an MVC view component view. If applied to a method, the MVC view component view name is default.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Method)]
++  public sealed class AspMvcViewComponentViewAttribute : Attribute { }
++
++  /// <summary>
++  /// ASP.NET MVC attribute. When applied to a parameter of an attribute,
++  /// indicates that this parameter is an MVC action name.
++  /// </summary>
++  /// <example><code>
++  /// [ActionName("Foo")]
++  /// public ActionResult Login(string returnUrl) {
++  ///   ViewBag.ReturnUrl = Url.Action("Foo"); // OK
++  ///   return RedirectToAction("Bar"); // Error: Cannot resolve action
++  /// }
++  /// </code></example>
++  [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property)]
++  public sealed class AspMvcActionSelectorAttribute : Attribute { }
++
++  [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.Field)]
++  public sealed class HtmlElementAttributesAttribute : Attribute
++  {
++    public HtmlElementAttributesAttribute() { }
++
++    public HtmlElementAttributesAttribute([NotNull] string name)
++    {
++      Name = name;
++    }
++
++    [CanBeNull] public string Name { get; private set; }
++  }
++
++  [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Field | AttributeTargets.Property)]
++  public sealed class HtmlAttributeValueAttribute : Attribute
++  {
++    public HtmlAttributeValueAttribute([NotNull] string name)
++    {
++      Name = name;
++    }
++
++    [NotNull] public string Name { get; private set; }
++  }
++
++  /// <summary>
++  /// Razor attribute. Indicates that a parameter or a method is a Razor section.
++  /// Use this attribute for custom wrappers similar to 
++  /// <c>System.Web.WebPages.WebPageBase.RenderSection(String)</c>.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Method)]
++  public sealed class RazorSectionAttribute : Attribute { }
++
++  /// <summary>
++  /// Indicates how method, constructor invocation or property access
++  /// over collection type affects content of the collection.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Property)]
++  public sealed class CollectionAccessAttribute : Attribute
++  {
++    public CollectionAccessAttribute(CollectionAccessType collectionAccessType)
++    {
++      CollectionAccessType = collectionAccessType;
++    }
++
++    public CollectionAccessType CollectionAccessType { get; private set; }
++  }
++
++  [Flags]
++  public enum CollectionAccessType
++  {
++    /// <summary>Method does not use or modify content of the collection.</summary>
++    None = 0,
++    /// <summary>Method only reads content of the collection but does not modify it.</summary>
++    Read = 1,
++    /// <summary>Method can change content of the collection but does not add new elements.</summary>
++    ModifyExistingContent = 2,
++    /// <summary>Method can add new elements to the collection.</summary>
++    UpdatedContent = ModifyExistingContent | 4
++  }
++
++  /// <summary>
++  /// Indicates that the marked method is assertion method, i.e. it halts control flow if
++  /// one of the conditions is satisfied. To set the condition, mark one of the parameters with 
++  /// <see cref="AssertionConditionAttribute"/> attribute.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Method)]
++  public sealed class AssertionMethodAttribute : Attribute { }
++
++  /// <summary>
++  /// Indicates the condition parameter of the assertion method. The method itself should be
++  /// marked by <see cref="AssertionMethodAttribute"/> attribute. The mandatory argument of
++  /// the attribute is the assertion type.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Parameter)]
++  public sealed class AssertionConditionAttribute : Attribute
++  {
++    public AssertionConditionAttribute(AssertionConditionType conditionType)
++    {
++      ConditionType = conditionType;
++    }
++
++    public AssertionConditionType ConditionType { get; private set; }
++  }
++
++  /// <summary>
++  /// Specifies assertion type. If the assertion method argument satisfies the condition,
++  /// then the execution continues. Otherwise, execution is assumed to be halted.
++  /// </summary>
++  public enum AssertionConditionType
++  {
++    /// <summary>Marked parameter should be evaluated to true.</summary>
++    IS_TRUE = 0,
++    /// <summary>Marked parameter should be evaluated to false.</summary>
++    IS_FALSE = 1,
++    /// <summary>Marked parameter should be evaluated to null value.</summary>
++    IS_NULL = 2,
++    /// <summary>Marked parameter should be evaluated to not null value.</summary>
++    IS_NOT_NULL = 3,
++  }
++
++  /// <summary>
++  /// Indicates that the marked method unconditionally terminates control flow execution.
++  /// For example, it could unconditionally throw exception.
++  /// </summary>
++  [Obsolete("Use [ContractAnnotation('=> halt')] instead")]
++  [AttributeUsage(AttributeTargets.Method)]
++  public sealed class TerminatesProgramAttribute : Attribute { }
++
++  /// <summary>
++  /// Indicates that method is pure LINQ method, with postponed enumeration (like Enumerable.Select,
++  /// .Where). This annotation allows inference of [InstantHandle] annotation for parameters
++  /// of delegate type by analyzing LINQ method chains.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Method)]
++  public sealed class LinqTunnelAttribute : Attribute { }
++
++  /// <summary>
++  /// Indicates that IEnumerable, passed as parameter, is not enumerated.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Parameter)]
++  public sealed class NoEnumerationAttribute : Attribute { }
++
++  /// <summary>
++  /// Indicates that parameter is regular expression pattern.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Parameter)]
++  public sealed class RegexPatternAttribute : Attribute { }
++
++  /// <summary>
++  /// Prevents the Member Reordering feature from tossing members of the marked class.
++  /// </summary>
++  /// <remarks>
++  /// The attribute must be mentioned in your member reordering patterns
++  /// </remarks>
++  [AttributeUsage(
++    AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Struct | AttributeTargets.Enum)]
++  public sealed class NoReorderAttribute : Attribute { }
++
++  /// <summary>
++  /// XAML attribute. Indicates the type that has <c>ItemsSource</c> property and should be treated
++  /// as <c>ItemsControl</c>-derived type, to enable inner items <c>DataContext</c> type resolve.
++  /// </summary>
++  [AttributeUsage(AttributeTargets.Class)]
++  public sealed class XamlItemsControlAttribute : Attribute { }
++
++  /// <summary>
++  /// XAML attribute. Indicates the property of some <c>BindingBase</c>-derived type, that
++  /// is used to bind some item of <c>ItemsControl</c>-derived type. This annotation will
++  /// enable the <c>DataContext</c> type resolve for XAML bindings for such properties.
++  /// </summary>
++  /// <remarks>
++  /// Property should have the tree ancestor of the <c>ItemsControl</c> type or
++  /// marked with the <see cref="XamlItemsControlAttribute"/> attribute.
++  /// </remarks>
++  [AttributeUsage(AttributeTargets.Property)]
++  public sealed class XamlItemBindingOfItemsControlAttribute : Attribute { }
++
++  [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
++  public sealed class AspChildControlTypeAttribute : Attribute
++  {
++    public AspChildControlTypeAttribute([NotNull] string tagName, [NotNull] Type controlType)
++    {
++      TagName = tagName;
++      ControlType = controlType;
++    }
++
++    [NotNull] public string TagName { get; private set; }
++
++    [NotNull] public Type ControlType { get; private set; }
++  }
++
++  [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method)]
++  public sealed class AspDataFieldAttribute : Attribute { }
++
++  [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method)]
++  public sealed class AspDataFieldsAttribute : Attribute { }
++
++  [AttributeUsage(AttributeTargets.Property)]
++  public sealed class AspMethodPropertyAttribute : Attribute { }
++
++  [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
++  public sealed class AspRequiredAttributeAttribute : Attribute
++  {
++    public AspRequiredAttributeAttribute([NotNull] string attribute)
++    {
++      Attribute = attribute;
++    }
++
++    [NotNull] public string Attribute { get; private set; }
++  }
++
++  [AttributeUsage(AttributeTargets.Property)]
++  public sealed class AspTypePropertyAttribute : Attribute
++  {
++    public bool CreateConstructorReferences { get; private set; }
++
++    public AspTypePropertyAttribute(bool createConstructorReferences)
++    {
++      CreateConstructorReferences = createConstructorReferences;
++    }
++  }
++
++  [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
++  public sealed class RazorImportNamespaceAttribute : Attribute
++  {
++    public RazorImportNamespaceAttribute([NotNull] string name)
++    {
++      Name = name;
++    }
++
++    [NotNull] public string Name { get; private set; }
++  }
++
++  [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
++  public sealed class RazorInjectionAttribute : Attribute
++  {
++    public RazorInjectionAttribute([NotNull] string type, [NotNull] string fieldName)
++    {
++      Type = type;
++      FieldName = fieldName;
++    }
++
++    [NotNull] public string Type { get; private set; }
++
++    [NotNull] public string FieldName { get; private set; }
++  }
++
++  [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
++  public sealed class RazorDirectiveAttribute : Attribute
++  {
++    public RazorDirectiveAttribute([NotNull] string directive)
++    {
++      Directive = directive;
++    }
++
++    [NotNull] public string Directive { get; private set; }
++  }
++
++  [AttributeUsage(AttributeTargets.Method)]
++  public sealed class RazorHelperCommonAttribute : Attribute { }
++
++  [AttributeUsage(AttributeTargets.Property)]
++  public sealed class RazorLayoutAttribute : Attribute { }
++
++  [AttributeUsage(AttributeTargets.Method)]
++  public sealed class RazorWriteLiteralMethodAttribute : Attribute { }
++
++  [AttributeUsage(AttributeTargets.Method)]
++  public sealed class RazorWriteMethodAttribute : Attribute { }
++
++  [AttributeUsage(AttributeTargets.Parameter)]
++  public sealed class RazorWriteMethodParameterAttribute : Attribute { }
++}
+\ No newline at end of file
