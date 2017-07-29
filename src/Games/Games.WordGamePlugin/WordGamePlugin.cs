@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using Core.Data;
 using Fluent;
 
-namespace EduGames.Games.WordGame
+namespace Games.WordGamePlugin
 {
     public class WordGamePlugin : IGamePlugin
     {

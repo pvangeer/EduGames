@@ -66,10 +66,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Games\WordGame\WordGameControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -78,10 +74,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Games\WordGame\WordGameControl.xaml.cs">
-      <DependentUpon>WordGameControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Games\WordGame\WordGamePlugin.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -136,9 +128,6 @@
     <Resource Include="Resources\UseColorHighlighting.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Mandala.png" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Core\Core.Data\Core.Data.csproj">
       <Project>{877264A9-A4A4-4E38-B217-4C6FB33901B4}</Project>
       <Name>Core.Data</Name>
@@ -151,6 +140,13 @@
       <Project>{497A260D-A53D-4C9F-ADBB-92B531D36D22}</Project>
       <Name>Games.MandalaGamePlugin</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Games\Games.WordGamePlugin\Games.WordGamePlugin.csproj">
+      <Project>{B28A7508-3F08-4501-BB11-0E0D7A31A4E1}</Project>
+      <Name>Games.WordGamePlugin</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Mandala.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

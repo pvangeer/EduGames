@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using Core.Data;
-using EduGames.Games.WordGame;
 using Games.FLickerGamePlugin;
 using Games.MandalaGamePlugin;
+using Games.WordGamePlugin;
 
 namespace EduGames
 {
