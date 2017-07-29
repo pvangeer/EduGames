@@ -1,9 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using EduGames.Games.MandalaGame.ModelView;
 using Fluent;
+using Games.MandalaGamePlugin.ModelView;
 
-namespace EduGames.Games.MandalaGame.View
+namespace Games.MandalaGamePlugin.View
 {
     /// <summary>
     /// Interaction logic for MandalaRibbonView.xaml

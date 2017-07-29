@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Windows.Input;
+using Games.MandalaGamePlugin.Model;
 
-namespace EduGames.Games.MandalaGame.ModelView
+namespace Games.MandalaGamePlugin.ModelView
 {
     public class RevertLastChangeCommand : ICommand
     {

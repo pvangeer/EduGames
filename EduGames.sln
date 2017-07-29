@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{090FFB26-0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Data", "src\Core\Core.Data\Core.Data.csproj", "{877264A9-A4A4-4E38-B217-4C6FB33901B4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Games.MandalaGamePlugin", "src\Games\Games.MandalaGamePlugin\Games.MandalaGamePlugin.csproj", "{497A260D-A53D-4C9F-ADBB-92B531D36D22}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{877264A9-A4A4-4E38-B217-4C6FB33901B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{877264A9-A4A4-4E38-B217-4C6FB33901B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{877264A9-A4A4-4E38-B217-4C6FB33901B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{497A260D-A53D-4C9F-ADBB-92B531D36D22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{497A260D-A53D-4C9F-ADBB-92B531D36D22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{497A260D-A53D-4C9F-ADBB-92B531D36D22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{497A260D-A53D-4C9F-ADBB-92B531D36D22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,5 +58,6 @@ Global
 		{FB33BEA5-CED9-4423-89ED-F19154A642FF} = {059501EA-C73D-419F-8A03-710EA09DFAC6}
 		{090FFB26-0844-4C1E-AC90-981A5033CB02} = {3A8D4C13-B3CB-4760-B535-B7852E990EF5}
 		{877264A9-A4A4-4E38-B217-4C6FB33901B4} = {090FFB26-0844-4C1E-AC90-981A5033CB02}
+		{497A260D-A53D-4C9F-ADBB-92B531D36D22} = {F5E2388C-8C21-4FA7-931F-670E3C2C94AF}
 	EndGlobalSection
 EndGlobal

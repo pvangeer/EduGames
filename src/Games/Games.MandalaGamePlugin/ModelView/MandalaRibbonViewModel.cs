@@ -4,8 +4,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using System.Windows.Media;
+using Games.MandalaGamePlugin.Model;
 
-namespace EduGames.Games.MandalaGame.ModelView
+namespace Games.MandalaGamePlugin.ModelView
 {
     public class MandalaRibbonViewModel: INotifyPropertyChanged
     {

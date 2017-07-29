@@ -6,7 +6,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 
-namespace EduGames.Games.MandalaGame.ModelView
+namespace Games.MandalaGamePlugin.ModelView
 {
     public static class MandalaSaveHelper
     {

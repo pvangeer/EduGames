@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace EduGames.Games.MandalaGame.ModelView
+namespace Games.MandalaGamePlugin.ModelView
 {
     public class SaveMandalaCommand : ICommand
     {

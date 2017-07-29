@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interactivity;
 
-namespace EduGames.Games.MandalaGame.View
+namespace Games.MandalaGamePlugin.View
 {
     public class ScrollOnNewItem : Behavior<ListView>
     {

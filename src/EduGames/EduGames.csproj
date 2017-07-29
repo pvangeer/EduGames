@@ -66,14 +66,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Games\MandalaGame\MandalaGameControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Games\MandalaGame\View\MandalaRibbonView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Games\WordGame\WordGameControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -86,22 +78,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Games\MandalaGame\ModelView\SaveMandalaCommand.cs" />
-    <Compile Include="Games\MandalaGame\Model\IMandalaElement.cs" />
-    <Compile Include="Games\MandalaGame\MandalaGameControl.xaml.cs">
-      <DependentUpon>MandalaGameControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Games\MandalaGame\MandalaGamePlugin.cs" />
-    <Compile Include="Games\MandalaGame\View\MandalaRibbonView.xaml.cs">
-      <DependentUpon>MandalaRibbonView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Games\MandalaGame\Model\MandalaPolygonElement.cs" />
-    <Compile Include="Games\MandalaGame\ModelView\MandalaRibbonViewModel.cs" />
-    <Compile Include="Games\MandalaGame\ModelView\MandalaSaveHelper.cs" />
-    <Compile Include="Games\MandalaGame\Model\Mandala.cs" />
-    <Compile Include="Games\MandalaGame\ModelView\NewMandalaCommand.cs" />
-    <Compile Include="Games\MandalaGame\ModelView\RevertLastChangeCommand.cs" />
-    <Compile Include="Games\MandalaGame\View\ScrollOnNewItem.cs" />
     <Compile Include="Games\WordGame\WordGameControl.xaml.cs">
       <DependentUpon>WordGameControl.xaml</DependentUpon>
     </Compile>
@@ -170,6 +146,10 @@
     <ProjectReference Include="..\Games\Games.FLickerGamePlugin\Games.FLickerGamePlugin.csproj">
       <Project>{4dc9e049-b18d-424a-8c31-57a0ac65ac2d}</Project>
       <Name>Games.FLickerGamePlugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Games\Games.MandalaGamePlugin\Games.MandalaGamePlugin.csproj">
+      <Project>{497A260D-A53D-4C9F-ADBB-92B531D36D22}</Project>
+      <Name>Games.MandalaGamePlugin</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

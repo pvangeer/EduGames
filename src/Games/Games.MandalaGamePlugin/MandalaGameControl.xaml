@@ -1,13 +1,13 @@
-﻿<UserControl x:Class="EduGames.Games.MandalaGame.MandalaGameControl"
+﻿<UserControl x:Class="Games.MandalaGamePlugin.MandalaGameControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mandalaGame="clr-namespace:EduGames.Games.MandalaGame"
+             xmlns:mandalaGamePlugin="clr-namespace:Games.MandalaGamePlugin"
              mc:Ignorable="d" 
              d:DesignHeight="500" 
              d:DesignWidth="500" 
-             d:DataContext="{d:DesignInstance mandalaGame:MandalaGameControl}">
+             d:DataContext="{d:DesignInstance mandalaGamePlugin:MandalaGameControl}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />

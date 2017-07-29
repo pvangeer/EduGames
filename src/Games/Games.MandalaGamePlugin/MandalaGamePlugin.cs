@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Windows.Controls;
 using Core.Data;
-using EduGames.Games.MandalaGame.ModelView;
 using Fluent;
+using Games.MandalaGamePlugin.Model;
+using Games.MandalaGamePlugin.ModelView;
 
-namespace EduGames.Games.MandalaGame
+namespace Games.MandalaGamePlugin
 {
     public class MandalaGamePlugin : IGamePlugin
     {

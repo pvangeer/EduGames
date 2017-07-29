@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Windows.Media;
 
-namespace EduGames.Games.MandalaGame
+namespace Games.MandalaGamePlugin.Model
 {
     public class Mandala : INotifyPropertyChanged
     {
