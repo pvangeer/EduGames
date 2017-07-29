@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using Fluent;
 
-namespace EduGames.Games
+namespace EduGames
 {
     public interface IGamePlugin
     {

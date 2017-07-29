@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:modelView="clr-namespace:EduGames"
     xmlns:fluent="urn:fluent-ribbon"
     mc:Ignorable="d" 
     Title="MainWindow" 
@@ -16,6 +17,10 @@
         <ResourceDictionary Source="/Fluent;Component/Themes/generic.xaml"/>
     </Window.Resources>
 
+    <fluent:RibbonWindow.DataContext>
+        <modelView:MainWindowViewModel/>
+    </fluent:RibbonWindow.DataContext>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -36,7 +41,6 @@
                                          Icon="Resources/UseColorHighlighting.png" />
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
-            
         </fluent:Ribbon>
         <ContentControl Grid.Row="1" Name="GamesContentPanel" />
     </Grid>

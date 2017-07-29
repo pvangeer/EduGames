@@ -9,7 +9,6 @@ namespace EduGames.Helpers
 {
     public static class RichTextBoxExtenstions
     {
-        
         public static Color KlinkerColor = Colors.DodgerBlue;
         public static Color TextColor = Colors.Black;
         public static Color DubbeleKlinkersColor = Colors.DodgerBlue;
@@ -58,7 +57,7 @@ namespace EduGames.Helpers
             }
 
             var index = 0;
-            while (index < text.Count() - 2)
+            while (index < text.Length - 2)
             {
                 if (CheckContainsKeyword(richTextBox, WordImageFactory.SamengesteldeKlanken, text, SamengesteldeKlankenColor, ref index))
                 {

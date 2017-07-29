@@ -2,14 +2,9 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
-using EduGames.Games;
-using EduGames.Games.FlickerGame;
-using EduGames.Games.MandalaGame;
-using EduGames.Games.WordGame;
 using EduGames.Helpers;
-using Button = Fluent.Button;
+using FluentButton = Fluent.Button;
 
 namespace EduGames
 {
@@ -18,30 +13,26 @@ namespace EduGames
     /// </summary>
     public partial class MainWindow
     {
-        private readonly IGamePlugin[] gamesPluginList;
-        private Dictionary<Button, IGamePlugin> gamesDictionary;
+        private Dictionary<FluentButton, IGamePlugin> gamesDictionary;
 
         public MainWindow()
         {
+            ViewModel = new MainWindowViewModel();
             InitializeComponent();
-            gamesPluginList = new IGamePlugin[]
-            {
-                new WordGamePlugin(),
-                new FlickerGamePlugin(), 
-                new MandalaGamePlugin(), 
-            };
 
             InitializeGames();
-            ActivateGame(gamesPluginList.First());
+            ActivateGame(ViewModel.GamesPluginList.First());
         }
+
+        public MainWindowViewModel ViewModel { get; }
 
         private void InitializeGames()
         {
-            gamesDictionary = new Dictionary<Button, IGamePlugin>();
-            foreach (var gamePlugin in gamesPluginList)
+            gamesDictionary = new Dictionary<FluentButton, IGamePlugin>();
+            foreach (var gamePlugin in ViewModel.GamesPluginList)
             {
                 //Create button in main ribbon
-                var button = new Button {Header = gamePlugin.Name, LargeIcon = gamePlugin.Icon};
+                var button = new FluentButton {Header = gamePlugin.Name, LargeIcon = gamePlugin.Icon};
                 button.Click += OnGamesButtonClick;
 
                 // Add button to tab in ribbon
@@ -60,6 +51,7 @@ namespace EduGames
                     Ribbon.Tabs.Add(gamePlugin.GameRibbon);
                     gamePlugin.GameRibbon.Visibility = Visibility.Hidden;
                 }
+
                 // Add button to dictionary
                 gamesDictionary[button] = gamePlugin;
             }
@@ -67,13 +59,13 @@ namespace EduGames
 
         private void OnGamesButtonClick(object sender, RoutedEventArgs routedEventArgs)
         {
-            ActivateGame(gamesDictionary[sender as Button]);
+            ActivateGame(gamesDictionary[sender as FluentButton]);
         }
 
         private void ActivateGame(IGamePlugin gamePlugin)
         {
             GamesContentPanel.Content = gamePlugin.GameControl;
-            foreach (var plugin in gamesPluginList)
+            foreach (var plugin in ViewModel.GamesPluginList)
             {
                 if (plugin.GameRibbon != null)
                 {
@@ -115,12 +107,5 @@ namespace EduGames
                 }
             }
         } 
-
-    }
-
-    public enum GameType
-    {
-        Reading,
-        Math
     }
 }

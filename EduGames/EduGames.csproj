@@ -102,7 +102,7 @@
     <Compile Include="Games\FlickerGame\FlickerRibbonControl.xaml.cs">
       <DependentUpon>FlickerRibbonControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Games\IGamePlugin.cs" />
+    <Compile Include="IGamePlugin.cs" />
     <Compile Include="Games\MandalaGame\ModelView\SaveMandalaCommand.cs" />
     <Compile Include="Games\MandalaGame\Model\IMandalaElement.cs" />
     <Compile Include="Games\MandalaGame\MandalaGameControl.xaml.cs">
@@ -123,6 +123,7 @@
       <DependentUpon>WordGameControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Games\WordGame\WordGamePlugin.cs" />
+    <Compile Include="GameType.cs" />
     <Compile Include="Helpers\RichTextBoxExtenstions.cs" />
     <Compile Include="Helpers\WordImageFactory.cs" />
     <Compile Include="Helpers\WpfExtensions.cs" />
@@ -132,6 +133,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
