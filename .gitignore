@@ -8,3 +8,12 @@ CustomWPFColorPicker/.vs/CustomColorPicker/v14/.suo
 /EduGamesTest/obj/Debug
 /EduGamesTest/bin/Debug
 *.suo
+/src/Core/Core.Data/obj/Debug
+/src/EduGames/obj/Debug
+/.vs
+/test/EduGamesTest/bin/Debug
+/test/EduGamesTest/obj/Debug
+/src/EduGames/bin/Debug
+/src/Games/Games.FLickerGamePlugin/obj/Debug
+/src/Core/Core.Data/bin/Debug
+/src/Games/Games.FLickerGamePlugin/bin/Debug
