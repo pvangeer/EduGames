@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace Core.Data.Helpers
+namespace Core.Utils
 {
     public static class RichTextBoxExtenstions
     {

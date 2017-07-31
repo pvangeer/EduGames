@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 
-namespace Core.Data.Helpers
+namespace Core.Utils
 {
     public static class WpfExtensions
     {

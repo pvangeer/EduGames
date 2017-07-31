@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Core.Data;
-using Core.Data.Helpers;
+using Core.Utils;
 using FluentButton = Fluent.Button;
 
 namespace EduGames

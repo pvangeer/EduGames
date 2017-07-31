@@ -80,6 +80,10 @@
       <Project>{877264A9-A4A4-4E38-B217-4C6FB33901B4}</Project>
       <Name>Core.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Core\Core.Utils\Core.Utils.csproj">
+      <Project>{BB8885B2-ED3E-4B74-847D-3344B2CDD894}</Project>
+      <Name>Core.Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
