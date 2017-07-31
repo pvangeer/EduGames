@@ -29,8 +29,21 @@
 
         <fluent:Ribbon Name="Ribbon">
             <fluent:RibbonTabItem Header="Spellen" Name="GamesTab">
-                <fluent:RibbonGroupBox Header="Taal" Name="ReadingGroupBox" />
-                <fluent:RibbonGroupBox Header="Rekenen" Name="CalculaGroupBox" />
+                <fluent:RibbonGroupBox Header="Taal" Name="ReadingGroupBox" ItemsSource="{Binding ReadingGames}">
+                    <fluent:RibbonGroupBox.ItemTemplate>
+                        <DataTemplate>
+                            <fluent:Button Header="{Binding Name}" LargeIcon="{Binding Icon}" Click="GameSelectionButtonClick">
+                            </fluent:Button>
+                        </DataTemplate>
+                    </fluent:RibbonGroupBox.ItemTemplate>
+                </fluent:RibbonGroupBox>
+                <fluent:RibbonGroupBox Header="Rekenen" Name="CalculaGroupBox" ItemsSource="{Binding CalculaGames}">
+                    <fluent:RibbonGroupBox.ItemTemplate>
+                        <DataTemplate>
+                            <fluent:Button Header="{Binding Name}" LargeIcon="{Binding Icon}" Click="GameSelectionButtonClick"></fluent:Button>
+                        </DataTemplate>
+                    </fluent:RibbonGroupBox.ItemTemplate>
+                </fluent:RibbonGroupBox>
                 <fluent:RibbonGroupBox Header="Instellingen">
                     <fluent:ToggleButton Name="SyntaxHighlightingToggleButon" 
                                          IsChecked="True" 
@@ -42,6 +55,6 @@
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
         </fluent:Ribbon>
-        <ContentControl Grid.Row="1" Name="GamesContentPanel" />
+        <ContentControl Grid.Row="1" Name="GamesContentPanel" Content="{Binding GamesContentPanelContent}"/>
     </Grid>
 </fluent:RibbonWindow>

@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Core.Data;
 using Core.Utils;
-using FluentButton = Fluent.Button;
 
 namespace EduGames
 {
@@ -14,70 +14,31 @@ namespace EduGames
     /// </summary>
     public partial class MainWindow
     {
-        private Dictionary<FluentButton, IGamePlugin> gamesDictionary;
+        private readonly MainWindowViewModel viewModel;
 
         public MainWindow()
         {
-            ViewModel = new MainWindowViewModel();
             InitializeComponent();
-
-            InitializeGames();
-            ActivateGame(ViewModel.GamesPluginList.First());
-        }
-
-        public MainWindowViewModel ViewModel { get; }
-
-        private void InitializeGames()
-        {
-            // TODO: Use binding in xaml instead of this code
-            gamesDictionary = new Dictionary<FluentButton, IGamePlugin>();
-            foreach (var gamePlugin in ViewModel.GamesPluginList)
+            viewModel = DataContext as MainWindowViewModel;
+            if (viewModel != null)
             {
-                //Create button in main ribbon
-                var button = new FluentButton {Header = gamePlugin.Name, LargeIcon = gamePlugin.Icon};
-                button.Click += OnGamesButtonClick;
-
-                // Add button to tab in ribbon
-                switch (gamePlugin.GameType)
+                viewModel.PropertyChanged += ViewModelPropertyChanged;
+                foreach (var pluginRibbon in viewModel.GamesPluginList.Select(gp => gp.GameRibbon))
                 {
-                    case GameType.Reading:
-                        ReadingGroupBox.Items.Add(button);
-                        break;
-                    case GameType.Math:
-                        CalculaGroupBox.Items.Add(button);
-                        break;
+                    if (pluginRibbon != null)
+                    {
+                        Ribbon.Tabs.Add(pluginRibbon);
+                    }
                 }
-
-                if (gamePlugin.GameRibbon != null)
-                {
-                    Ribbon.Tabs.Add(gamePlugin.GameRibbon);
-                    gamePlugin.GameRibbon.Visibility = Visibility.Hidden;
-                }
-
-                // Add button to dictionary
-                gamesDictionary[button] = gamePlugin;
             }
         }
 
-        private void OnGamesButtonClick(object sender, RoutedEventArgs routedEventArgs)
+        private void ViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            ActivateGame(gamesDictionary[sender as FluentButton]);
-        }
-
-        private void ActivateGame(IGamePlugin gamePlugin)
-        {
-            GamesContentPanel.Content = gamePlugin.GameControl;
-            foreach (var plugin in ViewModel.GamesPluginList)
+            // TODO: This should not be necessary. Binding should work.
+            if (e.PropertyName == "RibbonSelectedTabItem")
             {
-                if (plugin.GameRibbon != null)
-                {
-                    var isActivePlugin = plugin == gamePlugin;
-                    plugin.GameRibbon.Visibility = isActivePlugin ? Visibility.Visible : Visibility.Collapsed;
-                    if (isActivePlugin)
-                    {
-                        Ribbon.SelectedTabItem = plugin.GameRibbon;
-                    }
-                }
+                Ribbon.SelectedTabItem = viewModel.RibbonSelectedTabItem;
             }
         }
 
@@ -108,6 +69,16 @@ namespace EduGames
                     }
                 }
             }
-        } 
+        }
+
+        private void GameSelectionButtonClick(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Fluent.Button;
+            var gamePlugin = button?.DataContext as IGamePlugin;
+            if (gamePlugin != null)
+            {
+                viewModel.ActivateGame(gamePlugin);
+            }
+        }
     }
 }

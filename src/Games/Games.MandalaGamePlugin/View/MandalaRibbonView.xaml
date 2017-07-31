@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:fluent="urn:fluent-ribbon"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:global="clr-namespace:"
              xmlns:modelView="clr-namespace:Games.MandalaGamePlugin.ModelView"
              xmlns:view="clr-namespace:Games.MandalaGamePlugin.View"
              mc:Ignorable="d">

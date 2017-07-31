@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Core.Data;
@@ -12,7 +14,6 @@ namespace EduGames
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
-        public readonly ObservableCollection<IGamePlugin> GamesPluginList;
         private Control gamesContentPanelContent;
         private RibbonTabItem ribbonSelectedTabItem;
 
@@ -22,11 +23,21 @@ namespace EduGames
             {
                 new WordGamePlugin(),
                 new FlickerGamePlugin(),
-                new MandalaGamePlugin(),
+                new MandalaGamePlugin()
             };
+
+            ActivateGame(GamesPluginList.First());
         }
 
-        private void ActivateGame(IGamePlugin gamePlugin)
+        public readonly ObservableCollection<IGamePlugin> GamesPluginList;
+
+        public IEnumerable<IGamePlugin> CalculaGames => new ObservableCollection<IGamePlugin>(
+            GamesPluginList.Where(gp => gp.GameType == GameType.Math));
+
+        public IEnumerable<IGamePlugin> ReadingGames => new ObservableCollection<IGamePlugin>(
+            GamesPluginList.Where(gp => gp.GameType == GameType.Reading));
+
+        public void ActivateGame(IGamePlugin gamePlugin)
         {
             GamesContentPanelContent = gamePlugin.GameControl;
             foreach (var plugin in GamesPluginList)
