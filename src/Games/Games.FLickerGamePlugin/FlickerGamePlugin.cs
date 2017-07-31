@@ -28,7 +28,7 @@ namespace Games.FLickerGamePlugin
 
         public Control SettingsControl => null;
 
-        public string Icon => @"\Resources\WoordFlits.png";
+        public string Icon => @"/Games.FlickerGamePlugin;component\Resources\WoordFlits.png";
 
         public GameType GameType => GameType.Reading;
 

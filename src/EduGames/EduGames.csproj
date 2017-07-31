@@ -97,6 +97,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />
@@ -105,21 +106,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\WoordFlits.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\WoordFlits_NewWord.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\WoordFlits_RepeatWord.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\WoordRaden.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\WoordSchrijven.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Logo.png" />
@@ -148,9 +134,6 @@
       <Project>{B28A7508-3F08-4501-BB11-0E0D7A31A4E1}</Project>
       <Name>Games.WordGamePlugin</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Mandala.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

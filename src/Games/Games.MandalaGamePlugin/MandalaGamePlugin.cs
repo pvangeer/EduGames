@@ -48,7 +48,7 @@ namespace Games.MandalaGamePlugin
 
         public Control SettingsControl => null;
 
-        public string Icon => @"\Resources\Mandala.png";
+        public string Icon => @"/Games.MandalaGamePlugin;component\Resources\Mandala.png";
 
         public GameType GameType => GameType.Math;
     }

@@ -20,11 +20,11 @@
             <fluent:RibbonGroupBox Header="Spelen">
                 <fluent:Button x:Name="NewMandalaButton" 
                                Header="Nieuw" 
-                               LargeIcon="/EduGames;component\Resources\Mandala.png"
+                               LargeIcon="/Games.MandalaGamePlugin;component\Resources\Mandala.png"
                                Command="{Binding NewMandalaCommand}"/>
                 <fluent:Button x:Name="SaveMandala" 
                                Header="Opslaan" 
-                               LargeIcon="/EduGames;component\Resources\Mandala.png"
+                               LargeIcon="/Games.MandalaGamePlugin;component\Resources\Mandala.png"
                                Command="{Binding SaveMandalaCommand}"/>
             </fluent:RibbonGroupBox>
             <fluent:RibbonGroupBox Header="Achtergrond">

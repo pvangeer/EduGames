@@ -15,11 +15,11 @@
             <fluent:RibbonGroupBox Header="Spelen">
                 <fluent:Button x:Name="NewWordButton" 
                                    Header="Nieuw woord" 
-                               LargeIcon="/EduGames;component\Resources\WoordFlits_NewWord.png"
+                               LargeIcon="/Games.FlickerGamePlugin;component\Resources\WoordFlits_NewWord.png"
                                    Click="NewWordClick"/>
                 <fluent:Button x:Name="RepeatWordButton"
                                Header="Herhaal woord"
-                               LargeIcon="/EduGames;component\Resources\WoordFlits_RepeatWord.png"
+                               LargeIcon="/Games.FlickerGamePlugin;component\Resources\WoordFlits_RepeatWord.png"
                                Click="RepeatWordClick"></fluent:Button>
             </fluent:RibbonGroupBox>
             <fluent:RibbonGroupBox Header="Instellingen">

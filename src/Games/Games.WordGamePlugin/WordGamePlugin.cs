@@ -25,7 +25,7 @@ namespace Games.WordGamePlugin
 
         public Control SettingsControl => null;
 
-        public string Icon => @"\Resources\WoordSchrijven.png";
+        public string Icon => @"/Games.WordGamePlugin;component\Resources\WoordSchrijven.png";
 
         public GameType GameType => GameType.Reading;
 

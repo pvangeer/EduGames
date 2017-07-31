@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Games.WordGamePlugin.Properties {
+namespace Games.FLickerGamePlugin.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Games.WordGamePlugin.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Games.WordGamePlugin.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Games.FLickerGamePlugin.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -63,9 +63,29 @@ namespace Games.WordGamePlugin.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap WoordSchrijven {
+        internal static System.Drawing.Bitmap WoordFlits {
             get {
-                object obj = ResourceManager.GetObject("WoordSchrijven", resourceCulture);
+                object obj = ResourceManager.GetObject("WoordFlits", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WoordFlits_NewWord {
+            get {
+                object obj = ResourceManager.GetObject("WoordFlits_NewWord", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WoordFlits_RepeatWord {
+            get {
+                object obj = ResourceManager.GetObject("WoordFlits_RepeatWord", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
