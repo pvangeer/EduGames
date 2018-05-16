@@ -4,11 +4,11 @@ using Games.MandalaGamePlugin.Model;
 namespace Games.MandalaGamePlugin.Sandbox
 {
     /// <summary>
-    /// Interaction logic for CanvasListBoxControl.xaml
+    /// Interaction logic for GridCircleItemsControl.xaml
     /// </summary>
-    public partial class CanvasListBoxControl : UserControl
+    public partial class GridCircleItemsControl : UserControl
     {
-        public CanvasListBoxControl()
+        public GridCircleItemsControl()
         {
             InitializeComponent();
             this.DataContext = new MandalaGridViewModel();

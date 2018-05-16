@@ -13,13 +13,13 @@ namespace Games.MandalaGamePlugin
     {
         private readonly View.MandalaRibbonView ribbon;
         private readonly MandalaGameControl mandalaGameControl;
-        private CanvasListBoxControl secondGameControl;
+        private GridCircleItemsControl secondGameControl;
 
         public MandalaGamePlugin()
         {
             ribbon = new View.MandalaRibbonView();
             mandalaGameControl = new MandalaGameControl();
-            secondGameControl = new CanvasListBoxControl();
+            secondGameControl = new GridCircleItemsControl();
 
             InitiateNewMandala();
         }

@@ -84,8 +84,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="HalfValueConverter.cs" />
-    <Compile Include="Sandbox\CanvasListBoxControl.xaml.cs">
-      <DependentUpon>CanvasListBoxControl.xaml</DependentUpon>
+    <Compile Include="Sandbox\GridCircleItemsControl.xaml.cs">
+      <DependentUpon>GridCircleItemsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Sandbox\MandalaGridViewModel.cs" />
     <Compile Include="Sandbox\CircleViewModel.cs" />
@@ -103,7 +103,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Sandbox\CanvasListBoxControl.xaml">
+    <Page Include="Sandbox\GridCircleItemsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
