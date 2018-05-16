@@ -16,7 +16,7 @@ namespace Games.MandalaGamePlugin.Model
         private double gridBrushStrokeThickness;
         private Color gridBrushStrokeColor;
         private Color backgroundColor;
-
+    
         public Mandala()
         {
             Elements = new ObservableCollection<IMandalaElement>();
@@ -39,7 +39,7 @@ namespace Games.MandalaGamePlugin.Model
         #region Settings
         public Color BackgroundColor
         {
-            get { return backgroundColor; }
+            get => backgroundColor;
             set
             {
                 backgroundColor = value;
@@ -49,7 +49,7 @@ namespace Games.MandalaGamePlugin.Model
 
         public int CircularGridResolution
         {
-            get { return circularGridResolution; }
+            get => circularGridResolution;
             set
             {
                 circularGridResolution = value;
@@ -59,7 +59,7 @@ namespace Games.MandalaGamePlugin.Model
 
         public int MandalaGridResolution
         {
-            get { return mandalaGridResolution; }
+            get => mandalaGridResolution;
             set
             {
                 mandalaGridResolution = value;
@@ -69,7 +69,7 @@ namespace Games.MandalaGamePlugin.Model
 
         public bool ShowGrid
         {
-            get { return showGrid; }
+            get => showGrid;
             set
             {
                 showGrid = value;
@@ -79,7 +79,7 @@ namespace Games.MandalaGamePlugin.Model
 
         public int CurrentElementStrokeThickness
         {
-            get { return currentElementStrokeThickness; }
+            get => currentElementStrokeThickness;
             set
             {
                 currentElementStrokeThickness = value;
@@ -89,7 +89,7 @@ namespace Games.MandalaGamePlugin.Model
 
         public Color CurrentElementColor
         {
-            get { return currentElementColor; }
+            get => currentElementColor;
             set
             {
                 currentElementColor = value;
@@ -99,7 +99,7 @@ namespace Games.MandalaGamePlugin.Model
 
         public double PaintBrushStrokeThickness
         {
-            get { return paintBrushStrokeThickness; }
+            get => paintBrushStrokeThickness;
             set
             {
                 paintBrushStrokeThickness = value;
@@ -109,7 +109,7 @@ namespace Games.MandalaGamePlugin.Model
 
         public Color PaintBrushStrokeColor
         {
-            get { return paintBrushStrokeColor; }
+            get => paintBrushStrokeColor;
             set
             {
                 paintBrushStrokeColor = value;
@@ -119,7 +119,7 @@ namespace Games.MandalaGamePlugin.Model
 
         public double GridBrushStrokeThickness
         {
-            get { return gridBrushStrokeThickness; }
+            get => gridBrushStrokeThickness;
             set
             {
                 gridBrushStrokeThickness = value;
@@ -129,7 +129,7 @@ namespace Games.MandalaGamePlugin.Model
 
         public Color GridBrushStrokeColor
         {
-            get { return gridBrushStrokeColor; }
+            get => gridBrushStrokeColor;
             set
             {
                 gridBrushStrokeColor = value;

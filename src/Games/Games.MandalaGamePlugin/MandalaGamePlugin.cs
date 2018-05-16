@@ -4,6 +4,8 @@ using Core.Data;
 using Fluent;
 using Games.MandalaGamePlugin.Model;
 using Games.MandalaGamePlugin.ModelView;
+using Games.MandalaGamePlugin.Sandbox;
+using Games.MandalaGamePlugin.View;
 
 namespace Games.MandalaGamePlugin
 {
@@ -11,11 +13,13 @@ namespace Games.MandalaGamePlugin
     {
         private readonly View.MandalaRibbonView ribbon;
         private readonly MandalaGameControl mandalaGameControl;
+        private CanvasListBoxControl secondGameControl;
 
         public MandalaGamePlugin()
         {
             ribbon = new View.MandalaRibbonView();
             mandalaGameControl = new MandalaGameControl();
+            secondGameControl = new CanvasListBoxControl();
 
             InitiateNewMandala();
         }
@@ -28,6 +32,8 @@ namespace Games.MandalaGamePlugin
             mandalaRibbonViewModel.SaveMandalaRequested += SaveMandalaClicked;
             ribbon.ViewModel = mandalaRibbonViewModel;
             mandalaGameControl.Mandala = mandala;
+            //secondGameControl.DataContext = new MandalaViewModel(mandala);
+            secondGameControl.DataContext = new MandalaGridViewModel(mandala);
         }
 
         private void SaveMandalaClicked(object sender, EventArgs e)
@@ -42,7 +48,7 @@ namespace Games.MandalaGamePlugin
 
         public string Name => "Mandala maker";
 
-        public Control GameControl => mandalaGameControl;
+        public Control GameControl => secondGameControl;
 
         public RibbonTabItem GameRibbon => ribbon.RibbonTabItem;
 
