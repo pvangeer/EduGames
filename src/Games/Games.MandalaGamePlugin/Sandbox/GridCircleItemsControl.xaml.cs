@@ -11,7 +11,6 @@ namespace Games.MandalaGamePlugin.Sandbox
         public GridCircleItemsControl()
         {
             InitializeComponent();
-            this.DataContext = new MandalaGridViewModel();
         }
     }
 }

@@ -4,16 +4,12 @@ using System.Windows.Data;
 
 namespace Games.MandalaGamePlugin
 {
-    public class DiameterToEllipseDimensionConverter : IMultiValueConverter
+    public class MiddleYPositionConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            var diameter = (double) values[0];
-            var width = (double)values[1];
-            var height = (double)values[2];
-
-            var minWidthHeight = Math.Min(width, height);
-            return diameter * minWidthHeight;
+            var height = (double) values[1];
+            return height / 2.0;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

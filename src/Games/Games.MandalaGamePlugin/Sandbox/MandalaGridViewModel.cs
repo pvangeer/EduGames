@@ -16,6 +16,7 @@ namespace Games.MandalaGamePlugin.Sandbox
             if (mandala != null)
             {
                 CircleList = CreateCircleList();
+                GridLinesList = CreateGridLinesList();
                 mandala.PropertyChanged += MandalaPropertyChanged;
             }
         }
@@ -25,16 +26,36 @@ namespace Games.MandalaGamePlugin.Sandbox
             switch (e.PropertyName)
             {
                 case nameof(Mandala.CircularGridResolution):
+                    circleList = CreateCircleList();
+                    RaisePropertyChanged(nameof(CircleList));
+                    break;
                 case nameof(Mandala.GridBrushStrokeThickness):
                 case nameof(Mandala.GridBrushStrokeColor):
                     circleList = CreateCircleList();
+                    gridLinesList = CreateGridLinesList();
                     RaisePropertyChanged(nameof(CircleList));
+                    RaisePropertyChanged(nameof(GridLinesList));
                     break;
                 case nameof(Mandala.BackgroundColor):
                     RaisePropertyChanged(nameof(BackgroundColor));
                     break;
+                case nameof(Mandala.ShowGrid):
+                    RaisePropertyChanged(nameof(GridVisible));
+                    break;
             }
 
+        }
+
+        private ObservableCollection<GridLineViewModel> CreateGridLinesList()
+        {
+            var list = new ObservableCollection<GridLineViewModel>();
+            var dRotation = 360.0 / mandala.MandalaGridResolution;
+            for (int i = 0; i < mandala.MandalaGridResolution; i++)
+            {
+                list.Add(new GridLineViewModel(i*dRotation,mandala.GridBrushStrokeThickness, mandala.GridBrushStrokeColor));
+            }
+
+            return list;
         }
 
         private ObservableCollection<CircleViewModel> CreateCircleList()
@@ -50,7 +71,8 @@ namespace Games.MandalaGamePlugin.Sandbox
         }
 
         private ObservableCollection<CircleViewModel> circleList;
-        private Mandala mandala;
+        private ObservableCollection<GridLineViewModel> gridLinesList;
+        private readonly Mandala mandala;
 
         public ObservableCollection<CircleViewModel> CircleList
         {
@@ -63,6 +85,18 @@ namespace Games.MandalaGamePlugin.Sandbox
         }
 
         public SolidColorBrush BackgroundColor => new SolidColorBrush(mandala.BackgroundColor);
+
+        public ObservableCollection<GridLineViewModel> GridLinesList
+        {
+            get => gridLinesList;
+            set
+            {
+                gridLinesList = value;
+                RaisePropertyChanged("GridLinesList");
+            }
+        }
+
+        public bool GridVisible => mandala.ShowGrid;
 
         // INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged = delegate { };

@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Games.MandalaGamePlugin.Sandbox"
              xmlns:mandalaGamePlugin="clr-namespace:Games.MandalaGamePlugin"
-             mc:Ignorable="d" d:DesignHeight="1537.396" d:DesignWidth="1512.577">
+             mc:Ignorable="d" d:DesignHeight="1537.396" d:DesignWidth="800.577">
     <UserControl.DataContext>
         <local:MandalaGridViewModel/>
     </UserControl.DataContext>
@@ -13,12 +13,16 @@
         <ResourceDictionary>
             <local:DiameterToCanvasTopValueConverter x:Key="DiameterToCanvasTopValueConverter" />
             <local:DiameterToCanvasLeftValueConverter x:Key="DiameterToCanvasLeftValueConverter" />
-            <mandalaGamePlugin:DiameterToEllipseDimensionConverter x:Key="DiameterToEllipseDimensionConverter" />
+            <mandalaGamePlugin:RelativeToDimensionConverter x:Key="RelativeToDimensionConverter" />
+            <mandalaGamePlugin:RotationToRelativeGridLineCoordinatesConverter x:Key="RotationToRelativeGridLinePositions" />
+            <mandalaGamePlugin:RelativeDataToCanvasPathDataConverter x:Key="RelativeDataToCanvasPathDataConverter" />
+            <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid>
-        <ItemsControl ItemsSource="{Binding CircleList}">
+    <Grid Background="{Binding BackgroundColor}">
+        <ItemsControl ItemsSource="{Binding CircleList}"
+                      Visibility="{Binding GridVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <ItemsControl.ItemContainerStyle>
                 <Style>
                     <Setter Property="Canvas.Left">
@@ -43,7 +47,7 @@
             </ItemsControl.ItemContainerStyle>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <Canvas Name="Canvas" IsItemsHost="True" Background="{Binding BackgroundColor}"/>
+                    <Canvas Name="Canvas" IsItemsHost="True"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
@@ -51,20 +55,48 @@
                     <Grid>
                         <Ellipse Fill="Transparent" Stroke="{Binding StrokeColor}" StrokeThickness="{Binding StrokeThickness}">
                             <Ellipse.Width>
-                                <MultiBinding Converter="{StaticResource DiameterToEllipseDimensionConverter}">
+                                <MultiBinding Converter="{StaticResource RelativeToDimensionConverter}">
                                     <Binding Path="Diameter"/>
                                     <Binding ElementName="Canvas" Path="ActualWidth"/>
                                     <Binding ElementName="Canvas" Path="ActualHeight"/>
                                 </MultiBinding>
                             </Ellipse.Width>
                             <Ellipse.Height>
-                                <MultiBinding Converter="{StaticResource DiameterToEllipseDimensionConverter}">
+                                <MultiBinding Converter="{StaticResource RelativeToDimensionConverter}">
                                     <Binding Path="Diameter"/>
                                     <Binding ElementName="Canvas" Path="ActualWidth"/>
                                     <Binding ElementName="Canvas" Path="ActualHeight"/>
                                 </MultiBinding>
                             </Ellipse.Height>
                         </Ellipse>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <ItemsControl ItemsSource="{Binding GridLinesList}" 
+                      Background="Transparent"
+                      Visibility="{Binding GridVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas 
+                        Name="GridLinesCanvas" 
+                        IsItemsHost="True" 
+                        Background="Transparent"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="local:GridLineViewModel">
+                    <Grid>
+                        <Path StrokeThickness="{Binding StrokeThickness}"
+                              Stroke="{Binding StrokeColor}">
+                            <Path.Data>
+                                <MultiBinding Converter="{StaticResource RelativeDataToCanvasPathDataConverter}">
+                                    <Binding ElementName="GridLinesCanvas" Path="ActualWidth"/>
+                                    <Binding ElementName="GridLinesCanvas" Path="ActualHeight"/>
+                                    <Binding Path="Rotation" Converter="{StaticResource RotationToRelativeGridLinePositions}"/>
+                                </MultiBinding>
+                            </Path.Data>
+                        </Path>
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

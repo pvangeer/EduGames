@@ -60,7 +60,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CanvasMinWidthHeightMultiValueConverter.cs" />
-    <Compile Include="DiameterToEllipseDimensionConverter.cs" />
+    <Compile Include="MiddleXPositionConverter.cs" />
+    <Compile Include="MiddleYPositionConverter.cs" />
+    <Compile Include="RelativeDataToCanvasPathDataConverter.cs" />
+    <Compile Include="RelativeToDimensionConverter.cs" />
     <Compile Include="GridCircleViewModel.cs" />
     <Compile Include="GridDataToPathDataConverter.cs" />
     <Compile Include="MandalaGameControl.xaml.cs">
@@ -84,12 +87,16 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="HalfValueConverter.cs" />
+    <Compile Include="RotationToRelativeGridLineCoordinatesConverter.cs" />
+    <Compile Include="Sandbox\DiameterToCanvasTopValueConverter.cs" />
     <Compile Include="Sandbox\GridCircleItemsControl.xaml.cs">
       <DependentUpon>GridCircleItemsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Sandbox\GridLineViewModel.cs" />
     <Compile Include="Sandbox\MandalaGridViewModel.cs" />
     <Compile Include="Sandbox\CircleViewModel.cs" />
-    <Compile Include="Sandbox\Converters.cs" />
+    <Compile Include="Sandbox\CanvasCenterLeftConverter.cs" />
+    <Compile Include="TopYPositionConverter.cs" />
     <Compile Include="View\MandalaControl.xaml.cs">
       <DependentUpon>MandalaControl.xaml</DependentUpon>
     </Compile>
@@ -97,6 +104,7 @@
       <DependentUpon>MandalaRibbonView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ScrollOnNewItem.cs" />
+    <Compile Include="WidthToCenterConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="MandalaGameControl.xaml">

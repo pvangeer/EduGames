@@ -22,7 +22,7 @@ namespace Games.MandalaGamePlugin.Model
             Elements = new ObservableCollection<IMandalaElement>();
             BackgroundColor = Colors.LightYellow;
             CircularGridResolution = 10;
-            MandalaGridResolution = 6;
+            MandalaGridResolution = 7;
             PaintBrushStrokeColor = Colors.Purple;
             PaintBrushStrokeThickness = 1;
             GridBrushStrokeColor = Colors.Gray;
