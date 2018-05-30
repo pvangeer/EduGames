@@ -1,13 +1,15 @@
-﻿<UserControl x:Class="Games.MandalaGamePlugin.Sandbox.GridCircleItemsControl"
+﻿<UserControl x:Class="Games.MandalaGamePlugin.Sandbox.MandalaGameView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Games.MandalaGamePlugin.Sandbox"
              xmlns:mandalaGamePlugin="clr-namespace:Games.MandalaGamePlugin"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:modelView="clr-namespace:Games.MandalaGamePlugin.ModelView"
              mc:Ignorable="d" d:DesignHeight="1537.396" d:DesignWidth="800.577">
     <UserControl.DataContext>
-        <local:MandalaGridViewModel/>
+        <modelView:MandalaViewModel/>
     </UserControl.DataContext>
     <UserControl.Resources>
         <ResourceDictionary>
@@ -17,6 +19,7 @@
             <mandalaGamePlugin:RotationToRelativeGridLineCoordinatesConverter x:Key="RotationToRelativeGridLinePositions" />
             <mandalaGamePlugin:RelativeDataToCanvasPathDataConverter x:Key="RelativeDataToCanvasPathDataConverter" />
             <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <mandalaGamePlugin:MousePositionToParameterConverter x:Key="MousePositionToParameterConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -101,5 +104,70 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+        <ItemsControl ItemsSource="{Binding DrawObjectViewModel.PositionsList, Converter={StaticResource PositionsToDrawingElementsListConverter}}" 
+                      Background="Transparent">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <local:MouseTrackerDecorator x:Name="MouseTrackerDecorator">
+                        <Canvas Background="Transparent" x:Name="DrawingCanvas">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDown">
+                                    <i:InvokeCommandAction Command="{Binding MouseDownHandler}">
+                                        <i:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource MousePositionToParameterConverter}">
+                                                <Binding ElementName="MouseTrackerDecorator" Path="MousePosition"/>
+                                                <Binding ElementName="DrawingCanvas" Path="ActualWidth"/>
+                                                <Binding ElementName="DrawingCanvas" Path="ActualHeight"/>
+                                            </MultiBinding>
+                                        </i:InvokeCommandAction.CommandParameter>
+                                    </i:InvokeCommandAction>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="MouseMove">
+                                    <i:InvokeCommandAction Command="{Binding MouseMoveHandler}">
+                                        <i:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource MousePositionToParameterConverter}">
+                                                <Binding ElementName="MouseTrackerDecorator" Path="MousePosition"/>
+                                                <Binding ElementName="DrawingCanvas" Path="ActualWidth"/>
+                                                <Binding ElementName="DrawingCanvas" Path="ActualHeight"/>
+                                            </MultiBinding>
+                                        </i:InvokeCommandAction.CommandParameter>
+                                    </i:InvokeCommandAction>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="MouseUp">
+                                    <i:InvokeCommandAction Command="{Binding MouseUpHandler}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <!--<Path StrokeThickness="{Binding PaintBrushStrokeThickness}"
+                      Stroke="{Binding PaintBrushStrokeColor}">
+                    <Path.Data>
+                        <MultiBinding Converter="{StaticResource RelativeDataToCanvasPathDataConverter}">
+                            <Binding ElementName="GridLinesCanvas" Path="ActualWidth"/>
+                            <Binding ElementName="GridLinesCanvas" Path="ActualHeight"/>
+                            <Binding Path="DrawObjectViewModel.PositionsList" Converter="{StaticResource RotationToRelativeGridLinePositions}"/>
+                        </MultiBinding>
+                    </Path.Data>
+                </Path>-->
+                        </Canvas>
+                    </local:MouseTrackerDecorator>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="modelView:PolygonElementViewModel">
+                    <Grid>
+                        <Path StrokeThickness="{Binding StrokeThickness}"
+                              Stroke="{Binding StrokeColor}">
+                            <Path.Data>
+                                <MultiBinding Converter="{StaticResource RelativeDataToCanvasPathDataConverter}">
+                                    <Binding ElementName="GridLinesCanvas" Path="ActualWidth"/>
+                                    <Binding ElementName="GridLinesCanvas" Path="ActualHeight"/>
+                                    <Binding Path="Rotation" Converter="{StaticResource RotationToRelativeGridLinePositions}"/>
+                                </MultiBinding>
+                            </Path.Data>
+                        </Path>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+       
     </Grid>
 </UserControl>

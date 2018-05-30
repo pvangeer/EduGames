@@ -62,6 +62,8 @@
     <Compile Include="CanvasMinWidthHeightMultiValueConverter.cs" />
     <Compile Include="MiddleXPositionConverter.cs" />
     <Compile Include="MiddleYPositionConverter.cs" />
+    <Compile Include="MousePositionToParameterConverter.cs" />
+    <Compile Include="MouseTrackingObject.cs" />
     <Compile Include="RelativeDataToCanvasPathDataConverter.cs" />
     <Compile Include="RelativeToDimensionConverter.cs" />
     <Compile Include="GridCircleViewModel.cs" />
@@ -89,17 +91,19 @@
     <Compile Include="HalfValueConverter.cs" />
     <Compile Include="RotationToRelativeGridLineCoordinatesConverter.cs" />
     <Compile Include="Sandbox\DiameterToCanvasTopValueConverter.cs" />
-    <Compile Include="Sandbox\GridCircleItemsControl.xaml.cs">
-      <DependentUpon>GridCircleItemsControl.xaml</DependentUpon>
+    <Compile Include="Sandbox\MandalaGameView.xaml.cs">
+      <DependentUpon>MandalaGameView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Sandbox\GridLineViewModel.cs" />
-    <Compile Include="Sandbox\MandalaGridViewModel.cs" />
     <Compile Include="Sandbox\CircleViewModel.cs" />
     <Compile Include="Sandbox\CanvasCenterLeftConverter.cs" />
+    <Compile Include="Sandbox\MandalaInteractiveDrawObjectViewModel.cs" />
+    <Compile Include="Sandbox\MouseCommandBase.cs" />
+    <Compile Include="Sandbox\MouseDownCommand.cs" />
+    <Compile Include="Sandbox\MouseMoveCommand.cs" />
+    <Compile Include="Sandbox\MouseTrackerDecorator.cs" />
+    <Compile Include="Sandbox\MouseUpCommand.cs" />
     <Compile Include="TopYPositionConverter.cs" />
-    <Compile Include="View\MandalaControl.xaml.cs">
-      <DependentUpon>MandalaControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\MandalaRibbonView.xaml.cs">
       <DependentUpon>MandalaRibbonView.xaml</DependentUpon>
     </Compile>
@@ -111,11 +115,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Sandbox\GridCircleItemsControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\MandalaControl.xaml">
+    <Page Include="Sandbox\MandalaGameView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

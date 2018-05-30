@@ -13,13 +13,13 @@ namespace Games.MandalaGamePlugin
     {
         private readonly View.MandalaRibbonView ribbon;
         private readonly MandalaGameControl mandalaGameControl;
-        private GridCircleItemsControl secondGameControl;
+        private MandalaGameView secondGameControl;
 
         public MandalaGamePlugin()
         {
             ribbon = new View.MandalaRibbonView();
             mandalaGameControl = new MandalaGameControl();
-            secondGameControl = new GridCircleItemsControl();
+            secondGameControl = new MandalaGameView();
 
             InitiateNewMandala();
         }
@@ -33,7 +33,7 @@ namespace Games.MandalaGamePlugin
             ribbon.ViewModel = mandalaRibbonViewModel;
             mandalaGameControl.Mandala = mandala;
             //secondGameControl.DataContext = new MandalaViewModel(mandala);
-            secondGameControl.DataContext = new MandalaGridViewModel(mandala);
+            secondGameControl.DataContext = new MandalaViewModel(mandala);
         }
 
         private void SaveMandalaClicked(object sender, EventArgs e)
