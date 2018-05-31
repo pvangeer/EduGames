@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using Games.MandalaGamePlugin.Annotations;
@@ -28,7 +29,7 @@ namespace Games.MandalaGamePlugin.ModelView
             }
 
             Elements = new ObservableCollection<ElementViewModel>();
-            DrawObjectViewModel = new MandalaInteractiveDrawObjectViewModel();
+            DrawObjectViewModel = new MandalaInteractiveDrawObjectViewModel(mandala);
         }
 
         public ObservableCollection<ElementViewModel> Elements { get; }
@@ -180,21 +181,32 @@ namespace Games.MandalaGamePlugin.ModelView
         }
     }
 
+    public class MandalaElementDrawObject
+    {
+        public MandalaElementDrawObject(Point[] points, double strokeThickness, Brush strokeBrush, double rotation)
+        {
+            Points = points;
+            StrokeThickness = strokeThickness;
+            StrokeColor = strokeBrush;
+            Rotation = rotation;
+        }
+
+        public Point[] Points { get; }
+
+        public double StrokeThickness { get; }
+
+        public Brush StrokeColor { get; }
+
+        // TODO: Make separate viewmodel for rotated mandala elements and user property in converter
+        public double Rotation { get; }
+    }
+
     public class PolygonElementViewModel : ElementViewModel
     {
         public PolygonElementViewModel(MandalaPolygonElement polygonElement)
         {
-            PolygonElement = polygonElement;
+            throw new NotImplementedException();
         }
-
-        public MandalaPolygonElement PolygonElement { get; set; }
-
-        public double StrokeThickness => PolygonElement.StrokeThickness;
-
-        public Brush StrokeColor => new SolidColorBrush(PolygonElement.StrokeColor);
-
-        // TODO: Make separate viewmodel for rotated mandala elements and user property in converter
-        public double Rotation { get; }
     }
 
     public class ElementViewModel

@@ -20,6 +20,8 @@
             <mandalaGamePlugin:RelativeDataToCanvasPathDataConverter x:Key="RelativeDataToCanvasPathDataConverter" />
             <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <mandalaGamePlugin:MousePositionToParameterConverter x:Key="MousePositionToParameterConverter" />
+            <mandalaGamePlugin:MandalaElementDrawObjectToRelativePathDataConverter x:Key="MandalaElementDrawObjectToRelativePathDataConverter" />
+            <mandalaGamePlugin:PositionsToMandalaElementDrawObjectsConverter x:Key="PositionsToMandalaElementDrawObjectsConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -104,8 +106,15 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <ItemsControl ItemsSource="{Binding DrawObjectViewModel.PositionsList, Converter={StaticResource PositionsToDrawingElementsListConverter}}" 
-                      Background="Transparent">
+        <ItemsControl Background="Transparent">
+            <ItemsControl.ItemsSource>
+                <MultiBinding Converter="{StaticResource PositionsToMandalaElementDrawObjectsConverter}">
+                    <Binding Path="DrawObjectViewModel.CurrentElementColor"/>
+                    <Binding Path="DrawObjectViewModel.CurrentElementStrokeThickness"/>
+                    <Binding Path="DrawObjectViewModel.PositionsList"/>
+                    <Binding Path="DrawObjectViewModel.MandalaGridResolution"/>
+                </MultiBinding>
+            </ItemsControl.ItemsSource>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <local:MouseTrackerDecorator x:Name="MouseTrackerDecorator">
@@ -137,22 +146,12 @@
                                     <i:InvokeCommandAction Command="{Binding MouseUpHandler}"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
-                            <!--<Path StrokeThickness="{Binding PaintBrushStrokeThickness}"
-                      Stroke="{Binding PaintBrushStrokeColor}">
-                    <Path.Data>
-                        <MultiBinding Converter="{StaticResource RelativeDataToCanvasPathDataConverter}">
-                            <Binding ElementName="GridLinesCanvas" Path="ActualWidth"/>
-                            <Binding ElementName="GridLinesCanvas" Path="ActualHeight"/>
-                            <Binding Path="DrawObjectViewModel.PositionsList" Converter="{StaticResource RotationToRelativeGridLinePositions}"/>
-                        </MultiBinding>
-                    </Path.Data>
-                </Path>-->
                         </Canvas>
                     </local:MouseTrackerDecorator>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="modelView:PolygonElementViewModel">
+                <DataTemplate DataType="modelView:MandalaElementDrawObject">
                     <Grid>
                         <Path StrokeThickness="{Binding StrokeThickness}"
                               Stroke="{Binding StrokeColor}">
@@ -160,7 +159,10 @@
                                 <MultiBinding Converter="{StaticResource RelativeDataToCanvasPathDataConverter}">
                                     <Binding ElementName="GridLinesCanvas" Path="ActualWidth"/>
                                     <Binding ElementName="GridLinesCanvas" Path="ActualHeight"/>
-                                    <Binding Path="Rotation" Converter="{StaticResource RotationToRelativeGridLinePositions}"/>
+                                    <MultiBinding Converter="{StaticResource MandalaElementDrawObjectToRelativePathDataConverter}">
+                                        <Binding Path="Points"/>
+                                        <Binding Path="Rotation" Converter="{StaticResource RotationToRelativeGridLinePositions}"/>
+                                    </MultiBinding>
                                 </MultiBinding>
                             </Path.Data>
                         </Path>
