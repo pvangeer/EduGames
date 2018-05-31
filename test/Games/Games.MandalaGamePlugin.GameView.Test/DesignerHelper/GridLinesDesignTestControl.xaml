@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="Games.MandalaGamePlugin.GameView.Test.DesignerHelper.GridLinesDesignTestControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:test="clr-namespace:Games.MandalaGamePlugin.GameView.Test"
+             mc:Ignorable="d" d:DesignHeight="530.504" d:DesignWidth="582.301">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Games.MandalaGamePlugin.GameView;component/DataTemplates/GridLinesTemplate.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <UserControl.DataContext>
+        <test:GridLinesTestViewModel/>
+    </UserControl.DataContext>
+    <Grid>
+        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource GridLinesTemplate}"/>
+    </Grid>
+</UserControl>

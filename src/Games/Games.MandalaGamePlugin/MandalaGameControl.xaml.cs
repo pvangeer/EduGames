@@ -11,6 +11,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Xml;
+using Games.MandalaGamePlugin.Data;
 using Games.MandalaGamePlugin.Model;
 
 namespace Games.MandalaGamePlugin

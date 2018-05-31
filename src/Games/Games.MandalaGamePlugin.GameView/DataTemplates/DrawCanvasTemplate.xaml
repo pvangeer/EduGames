@@ -1,0 +1,77 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:viewModels="clr-namespace:Games.MandalaGamePlugin.GameView.ViewModels"
+                    xmlns:mousePositionTracker="clr-namespace:Games.MandalaGamePlugin.GameView.MousePositionTracker"
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                    xmlns:converters="clr-namespace:Games.MandalaGamePlugin.GameView.Converters">
+
+    <converters:PositionsToMandalaElementDrawObjectsConverter x:Key="PositionsToMandalaElementDrawObjectsConverter" />
+    <converters:MousePositionToParameterConverter x:Key="MousePositionToParameterConverter" />
+    <converters:RelativeDataToCanvasPathDataConverter x:Key="RelativeDataToCanvasPathDataConverter" />
+    <converters:MandalaElementDrawObjectToRelativePathDataConverter x:Key="MandalaElementDrawObjectToRelativePathDataConverter" />
+
+    <DataTemplate DataType="viewModels:DrawCanvasViewModel" x:Key="DrawCanvasTemplate">
+        <ItemsControl Background="Transparent">
+            <ItemsControl.ItemsSource>
+                <MultiBinding Converter="{StaticResource PositionsToMandalaElementDrawObjectsConverter}">
+                    <Binding Path="CurrentElementColor"/>
+                    <Binding Path="CurrentElementStrokeThickness"/>
+                    <Binding Path="PositionsList"/>
+                    <Binding Path="MandalaGridResolution"/>
+                </MultiBinding>
+            </ItemsControl.ItemsSource>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <!--<mousePositionTracker:MouseTrackerDecorator x:Name="MouseTrackerDecorator">-->
+                        <Canvas Background="Transparent" x:Name="DrawingCanvas">
+                            <!--<i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDown">
+                                    <i:InvokeCommandAction Command="{Binding MouseDownHandler}">
+                                        <i:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource MousePositionToParameterConverter}">
+                                                <Binding ElementName="MouseTrackerDecorator" Path="MousePosition"/>
+                                                <Binding ElementName="DrawingCanvas" Path="ActualWidth"/>
+                                                <Binding ElementName="DrawingCanvas" Path="ActualHeight"/>
+                                            </MultiBinding>
+                                        </i:InvokeCommandAction.CommandParameter>
+                                    </i:InvokeCommandAction>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="MouseMove">
+                                    <i:InvokeCommandAction Command="{Binding MouseMoveHandler}">
+                                        <i:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource MousePositionToParameterConverter}">
+                                                <Binding ElementName="MouseTrackerDecorator" Path="MousePosition"/>
+                                                <Binding ElementName="DrawingCanvas" Path="ActualWidth"/>
+                                                <Binding ElementName="DrawingCanvas" Path="ActualHeight"/>
+                                            </MultiBinding>
+                                        </i:InvokeCommandAction.CommandParameter>
+                                    </i:InvokeCommandAction>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="MouseUp">
+                                    <i:InvokeCommandAction Command="{Binding MouseUpHandler}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>-->
+                        </Canvas>
+                    <!--</mousePositionTracker:MouseTrackerDecorator>-->
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="viewModels:MandalaElementDrawObject">
+                    <Grid>
+                        <Path StrokeThickness="{Binding StrokeThickness}"
+                              Stroke="{Binding StrokeColor}">
+                            <Path.Data>
+                                <MultiBinding Converter="{StaticResource RelativeDataToCanvasPathDataConverter}">
+                                    <Binding ElementName="GridLinesCanvas" Path="ActualWidth"/>
+                                    <Binding ElementName="GridLinesCanvas" Path="ActualHeight"/>
+                                    <Binding Path="Points"/>
+                                    <Binding Path="Rotation"/>
+                                </MultiBinding>
+                            </Path.Data>
+                        </Path>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </DataTemplate>
+</ResourceDictionary>

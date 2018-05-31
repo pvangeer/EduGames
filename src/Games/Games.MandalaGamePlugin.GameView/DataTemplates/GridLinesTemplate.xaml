@@ -1,0 +1,40 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:viewModels="clr-namespace:Games.MandalaGamePlugin.GameView.ViewModels"
+                    xmlns:converters="clr-namespace:Games.MandalaGamePlugin.GameView.Converters">
+
+    <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    <converters:RelativeDataToCanvasPathDataConverter x:Key="RelativeDataToCanvasPathDataConverter" />
+    <converters:RotationToRelativeGridLineCoordinatesConverter x:Key="RotationToRelativeGridLinePositions" />
+
+    <DataTemplate DataType="viewModels:GridLinesViewModel" x:Key="GridLinesTemplate">
+        <ItemsControl ItemsSource="{Binding GridLinesList}" 
+                      Background="Transparent"
+                      Visibility="{Binding GridVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas 
+                        Name="GridLinesCanvas" 
+                        IsItemsHost="True" 
+                        Background="Transparent"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="viewModels:GridLineViewModel">
+                    <Grid>
+                        <Path StrokeThickness="{Binding StrokeThickness}"
+                              Stroke="{Binding StrokeColor}">
+                            <Path.Data>
+                                <MultiBinding Converter="{StaticResource RelativeDataToCanvasPathDataConverter}">
+                                    <Binding ElementName="GridLinesCanvas" Path="ActualWidth"/>
+                                    <Binding ElementName="GridLinesCanvas" Path="ActualHeight"/>
+                                    <Binding Path="Rotation" Converter="{StaticResource RotationToRelativeGridLinePositions}"/>
+                                </MultiBinding>
+                            </Path.Data>
+                        </Path>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </DataTemplate>
+</ResourceDictionary>

@@ -1,0 +1,181 @@
+﻿<UserControl x:Class="Games.MandalaGamePlugin.GameView.MandalaGameView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModels="clr-namespace:Games.MandalaGamePlugin.GameView.ViewModels"
+             mc:Ignorable="d" d:DesignHeight="1537.396" d:DesignWidth="800.577">
+    <UserControl.DataContext>
+        <viewModels:MandalaGameViewModel/>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="DataTemplates/GridCirclesTemplate.xaml"/>
+                <ResourceDictionary Source="DataTemplates/GridLinesTemplate.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!--<converters:DiameterToCanvasTopValueConverter x:Key="DiameterToCanvasTopValueConverter" />
+            <converters:DiameterToCanvasLeftValueConverter x:Key="DiameterToCanvasLeftValueConverter" />
+            <converters:RelativeToDimensionConverter x:Key="RelativeToDimensionConverter" />
+            <converters:RotationToRelativeGridLineCoordinatesConverter x:Key="RotationToRelativeGridLinePositions" />
+            <converters:RelativeDataToCanvasPathDataConverter x:Key="RelativeDataToCanvasPathDataConverter" />
+            <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <converters:MousePositionToParameterConverter x:Key="MousePositionToParameterConverter" />
+            <converters:MandalaElementDrawObjectToRelativePathDataConverter x:Key="MandalaElementDrawObjectToRelativePathDataConverter" />
+            <converters:PositionsToMandalaElementDrawObjectsConverter x:Key="PositionsToMandalaElementDrawObjectsConverter" />-->
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid Background="{Binding BackgroundColor}">
+        <ContentPresenter Content="{Binding GridCirclesViewModel}" ContentTemplate="{StaticResource GridCirclesTemplate}"/>
+        <ContentPresenter Content="{Binding GridLinesViewModel}" ContentTemplate="{StaticResource GridLinesTemplate}"/>
+        <!--<ItemsControl ItemsSource="{Binding CircleList}"
+                      Visibility="{Binding GridVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+            <ItemsControl.ItemContainerStyle>
+                <Style>
+                    <Setter Property="Canvas.Left">
+                        <Setter.Value>
+                            <MultiBinding Converter="{StaticResource DiameterToCanvasLeftValueConverter}">
+                                <Binding Path="Diameter"/>
+                                <Binding ElementName="Canvas" Path="ActualWidth"/>
+                                <Binding ElementName="Canvas" Path="ActualHeight"/>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Canvas.Top">
+                        <Setter.Value>
+                            <MultiBinding Converter="{StaticResource DiameterToCanvasTopValueConverter}">
+                                <Binding Path="Diameter"/>
+                                <Binding ElementName="Canvas" Path="ActualWidth"/>
+                                <Binding ElementName="Canvas" Path="ActualHeight"/>
+                            </MultiBinding>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas Name="Canvas" IsItemsHost="True"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="viewModels:CircleViewModel">
+                    <Grid>
+                        <Ellipse Fill="Transparent" Stroke="{Binding StrokeColor}" StrokeThickness="{Binding StrokeThickness}">
+                            <Ellipse.Width>
+                                <MultiBinding Converter="{StaticResource RelativeToDimensionConverter}">
+                                    <Binding Path="Diameter"/>
+                                    <Binding ElementName="Canvas" Path="ActualWidth"/>
+                                    <Binding ElementName="Canvas" Path="ActualHeight"/>
+                                </MultiBinding>
+                            </Ellipse.Width>
+                            <Ellipse.Height>
+                                <MultiBinding Converter="{StaticResource RelativeToDimensionConverter}">
+                                    <Binding Path="Diameter"/>
+                                    <Binding ElementName="Canvas" Path="ActualWidth"/>
+                                    <Binding ElementName="Canvas" Path="ActualHeight"/>
+                                </MultiBinding>
+                            </Ellipse.Height>
+                        </Ellipse>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>-->
+        <!--<ItemsControl ItemsSource="{Binding GridLinesList}" 
+                      Background="Transparent"
+                      Visibility="{Binding GridVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas 
+                        Name="GridLinesCanvas" 
+                        IsItemsHost="True" 
+                        Background="Transparent"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="viewModels:GridLineViewModel">
+                    <Grid>
+                        <Path StrokeThickness="{Binding StrokeThickness}"
+                              Stroke="{Binding StrokeColor}">
+                            <Path.Data>
+                                <MultiBinding Converter="{StaticResource RelativeDataToCanvasPathDataConverter}">
+                                    <Binding ElementName="GridLinesCanvas" Path="ActualWidth"/>
+                                    <Binding ElementName="GridLinesCanvas" Path="ActualHeight"/>
+                                    <Binding Path="Rotation" Converter="{StaticResource RotationToRelativeGridLinePositions}"/>
+                                </MultiBinding>
+                            </Path.Data>
+                        </Path>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>-->
+        <!--<ItemsControl Background="Transparent">
+            <ItemsControl.ItemsSource>
+                <MultiBinding Converter="{StaticResource PositionsToMandalaElementDrawObjectsConverter}">
+                    <Binding Path="DrawObjectViewModel.CurrentElementColor"/>
+                    <Binding Path="DrawObjectViewModel.CurrentElementStrokeThickness"/>
+                    <Binding Path="DrawObjectViewModel.PositionsList"/>
+                    <Binding Path="DrawObjectViewModel.MandalaGridResolution"/>
+                </MultiBinding>
+            </ItemsControl.ItemsSource>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <mousePositionTracker:MouseTrackerDecorator x:Name="MouseTrackerDecorator">
+                        <Canvas Background="Transparent" x:Name="DrawingCanvas">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseDown">
+                                    <i:InvokeCommandAction Command="{Binding MouseDownHandler}">
+                                        <i:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource MousePositionToParameterConverter}">
+                                                <Binding ElementName="MouseTrackerDecorator" Path="MousePosition"/>
+                                                <Binding ElementName="DrawingCanvas" Path="ActualWidth"/>
+                                                <Binding ElementName="DrawingCanvas" Path="ActualHeight"/>
+                                            </MultiBinding>
+                                        </i:InvokeCommandAction.CommandParameter>
+                                    </i:InvokeCommandAction>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="MouseMove">
+                                    <i:InvokeCommandAction Command="{Binding MouseMoveHandler}">
+                                        <i:InvokeCommandAction.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource MousePositionToParameterConverter}">
+                                                <Binding ElementName="MouseTrackerDecorator" Path="MousePosition"/>
+                                                <Binding ElementName="DrawingCanvas" Path="ActualWidth"/>
+                                                <Binding ElementName="DrawingCanvas" Path="ActualHeight"/>
+                                            </MultiBinding>
+                                        </i:InvokeCommandAction.CommandParameter>
+                                    </i:InvokeCommandAction>
+                                </i:EventTrigger>
+                                <i:EventTrigger EventName="MouseUp">
+                                    <i:InvokeCommandAction Command="{Binding MouseUpHandler}"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </Canvas>
+                    </mousePositionTracker:MouseTrackerDecorator>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="viewModels:MandalaElementDrawObject">
+                    <Grid>
+                        <Path StrokeThickness="{Binding StrokeThickness}"
+                              Stroke="{Binding StrokeColor}">
+                            <Path.Data>
+                                <MultiBinding Converter="{StaticResource RelativeDataToCanvasPathDataConverter}">
+                                    <Binding ElementName="GridLinesCanvas" Path="ActualWidth"/>
+                                    <Binding ElementName="GridLinesCanvas" Path="ActualHeight"/>
+                                    <MultiBinding Converter="{StaticResource MandalaElementDrawObjectToRelativePathDataConverter}">
+                                        <Binding Path="Points"/>
+                                        <Binding Path="Rotation" Converter="{StaticResource RotationToRelativeGridLinePositions}"/>
+                                    </MultiBinding>
+                                </MultiBinding>
+                            </Path.Data>
+                        </Path>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>-->
+    </Grid>
+</UserControl>
+
+
+

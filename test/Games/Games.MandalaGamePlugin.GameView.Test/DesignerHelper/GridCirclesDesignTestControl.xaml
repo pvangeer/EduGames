@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="Games.MandalaGamePlugin.GameView.Test.DesignerHelper.GridCirclesDesignTestControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:test="clr-namespace:Games.MandalaGamePlugin.GameView.Test"
+             mc:Ignorable="d" Height="492.902" Width="454.873">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Games.MandalaGamePlugin.GameView;component/DataTemplates/GridCirclesTemplate.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <UserControl.DataContext>
+        <test:GridCirclesTestViewModel/>
+    </UserControl.DataContext>
+    <Grid>
+        <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource GridCirclesTemplate}"/>
+    </Grid>
+</UserControl>

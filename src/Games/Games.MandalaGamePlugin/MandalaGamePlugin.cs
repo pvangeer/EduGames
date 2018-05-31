@@ -2,10 +2,9 @@
 using System.Windows.Controls;
 using Core.Data;
 using Fluent;
+using Games.MandalaGamePlugin.GameView;
 using Games.MandalaGamePlugin.Model;
 using Games.MandalaGamePlugin.ModelView;
-using Games.MandalaGamePlugin.Sandbox;
-using Games.MandalaGamePlugin.View;
 
 namespace Games.MandalaGamePlugin
 {
@@ -32,7 +31,7 @@ namespace Games.MandalaGamePlugin
             mandalaRibbonViewModel.SaveMandalaRequested += SaveMandalaClicked;
             ribbon.ViewModel = mandalaRibbonViewModel;
             mandalaGameControl.Mandala = mandala;
-            //secondGameControl.DataContext = new MandalaViewModel(mandala);
+            //secondGameControl.DataContext = new MandalaGameViewModel(mandala);
             secondGameControl.DataContext = new MandalaViewModel(mandala);
         }
 
