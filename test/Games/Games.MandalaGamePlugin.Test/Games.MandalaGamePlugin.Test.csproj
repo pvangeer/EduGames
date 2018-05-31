@@ -51,20 +51,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
-    <Compile Include="DesignerHelper\MandalaGameControlMvvmDesigner.xaml.cs">
-      <DependentUpon>MandalaGameControlMvvmDesigner.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="DesignerHelper\MandalaGameControlMvvmDesigner.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Games\Games.MandalaGamePlugin\Games.MandalaGamePlugin.csproj">
