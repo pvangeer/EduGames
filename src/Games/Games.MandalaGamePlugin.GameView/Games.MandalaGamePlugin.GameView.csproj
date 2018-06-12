@@ -79,8 +79,7 @@
     <Compile Include="Commands\MouseDownCommand.cs" />
     <Compile Include="Commands\MouseMoveCommand.cs" />
     <Compile Include="Converters\MousePositionToParameterConverter.cs" />
-    <Compile Include="MousePositionTracker\MouseTrackerDecorator.cs" />
-    <Compile Include="MousePositionTracker\MouseTrackingObject.cs" />
+    <Compile Include="MousePositionTracker\MousePositionInformation.cs" />
     <Compile Include="Commands\MouseUpCommand.cs" />
     <Compile Include="Converters\PositionsToMandalaElementDrawObjectsConverter.cs" />
     <Compile Include="Properties\Annotations.cs" />

@@ -2,7 +2,7 @@ using System.Windows;
 
 namespace Games.MandalaGamePlugin.GameView.MousePositionTracker
 {
-    public class MouseTrackingObject
+    public class MousePositionInformation
     {
         public Point MousePosition { get; set; }
 

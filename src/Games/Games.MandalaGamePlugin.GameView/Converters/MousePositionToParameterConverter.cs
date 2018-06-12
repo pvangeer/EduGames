@@ -20,7 +20,7 @@ namespace Games.MandalaGamePlugin.GameView.Converters
 
             var mousePosition = Mouse.GetPosition(canvas);
 
-            return new RelativeMousePositionInformation
+            return new MousePositionInformation
             {
                 MousePosition = mousePosition,
                 ElementHeight = elementHeight,
