@@ -7,7 +7,7 @@
     <converters:RelativeDataToCanvasPathDataConverter x:Key="RelativeDataToCanvasPathDataConverter" />
     <converters:RotationToRelativeGridLineCoordinatesConverter x:Key="RotationToRelativeGridLinePositions" />
 
-    <DataTemplate DataType="viewModels:GridLinesViewModel" x:Key="GridLinesTemplate">
+    <DataTemplate x:Key="GridLinesTemplate" DataType="viewModels:GridLinesViewModel">
         <ItemsControl ItemsSource="{Binding GridLinesList}" 
                       Background="Transparent"
                       Visibility="{Binding GridVisible, Converter={StaticResource BoolToVisibilityConverter}}">

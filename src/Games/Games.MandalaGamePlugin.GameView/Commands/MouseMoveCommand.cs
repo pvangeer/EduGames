@@ -11,7 +11,7 @@ namespace Games.MandalaGamePlugin.GameView.Commands
 
         public override void Execute(object parameter)
         {
-            if (!(parameter is MouseTrackingObject trackingInformation))
+            if (!(parameter is MousePositionInformation trackingInformation))
             {
                 return;
             }
@@ -20,6 +20,7 @@ namespace Games.MandalaGamePlugin.GameView.Commands
             var relativeX = (trackingInformation.MousePosition.X - trackingInformation.ElementWidth / 2.0) / minWidthHeightRadius;
             var relativeY = (trackingInformation.ElementHeight / 2.0 - trackingInformation.MousePosition.Y) / minWidthHeightRadius;
             MandalaViewModel.PositionsList.Add(new Point(relativeX, relativeY));
+            MandalaViewModel.OnPropertyChanged(nameof(MandalaViewModel.PositionsList));
         }
 
         public override bool CanExecute(object parameter)

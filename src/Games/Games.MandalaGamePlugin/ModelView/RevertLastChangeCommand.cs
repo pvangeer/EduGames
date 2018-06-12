@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Windows.Input;
-using Games.MandalaGamePlugin.Model;
+using Games.MandalaGamePlugin.Data;
 
 namespace Games.MandalaGamePlugin.ModelView
 {

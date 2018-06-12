@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Games.MandalaGamePlugin.Data;
 using Games.MandalaGamePlugin.GameView.Properties;
-using Games.MandalaGamePlugin.Model;
 
 namespace Games.MandalaGamePlugin.GameView.ViewModels
 {

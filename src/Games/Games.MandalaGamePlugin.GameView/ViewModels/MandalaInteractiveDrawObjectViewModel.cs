@@ -3,8 +3,8 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
+using Games.MandalaGamePlugin.Data;
 using Games.MandalaGamePlugin.GameView.Properties;
-using Games.MandalaGamePlugin.Model;
 
 namespace Games.MandalaGamePlugin.GameView.ViewModels
 {

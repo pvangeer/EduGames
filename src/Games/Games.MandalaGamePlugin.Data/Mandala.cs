@@ -1,9 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Media;
-using Games.MandalaGamePlugin.Data;
 
-namespace Games.MandalaGamePlugin.Model
+namespace Games.MandalaGamePlugin.Data
 {
     public class Mandala : INotifyPropertyChanged
     {
@@ -23,7 +22,7 @@ namespace Games.MandalaGamePlugin.Model
             Elements = new ObservableCollection<IMandalaElement>();
             BackgroundColor = Colors.LightYellow;
             CircularGridResolution = 10;
-            MandalaGridResolution = 7;
+            MandalaGridResolution = 6;
             PaintBrushStrokeColor = Colors.Purple;
             PaintBrushStrokeThickness = 1;
             GridBrushStrokeColor = Colors.Gray;

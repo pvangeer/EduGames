@@ -22,3 +22,5 @@ D:\pieter\EduGames\test\Games\Games.MandalaGamePlugin.GameView.Test\obj\Debug\Ga
 D:\pieter\EduGames\test\Games\Games.MandalaGamePlugin.GameView.Test\obj\Debug\Games.MandalaGamePlugin.GameView.Test.csproj.CopyComplete
 D:\pieter\EduGames\test\Games\Games.MandalaGamePlugin.GameView.Test\obj\Debug\Games.MandalaGamePlugin.GameView.Test.dll
 D:\pieter\EduGames\test\Games\Games.MandalaGamePlugin.GameView.Test\obj\Debug\Games.MandalaGamePlugin.GameView.Test.pdb
+D:\pieter\EduGames\test\Games\Games.MandalaGamePlugin.GameView.Test\obj\Debug\DesignerHelper\MandalaElementsTemplateDesignTestControl.g.cs
+D:\pieter\EduGames\test\Games\Games.MandalaGamePlugin.GameView.Test\obj\Debug\DesignerHelper\MandalaElementsTemplateDesignTestControl.baml

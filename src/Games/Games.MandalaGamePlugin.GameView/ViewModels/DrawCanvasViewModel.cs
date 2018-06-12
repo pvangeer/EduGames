@@ -11,7 +11,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Games.MandalaGamePlugin.Data;
 using Games.MandalaGamePlugin.GameView.Commands;
-using Games.MandalaGamePlugin.Model;
 
 namespace Games.MandalaGamePlugin.GameView.ViewModels
 {
@@ -36,12 +35,6 @@ namespace Games.MandalaGamePlugin.GameView.ViewModels
                 case nameof(Mandala.MandalaGridResolution):
                     OnPropertyChanged(nameof(MandalaGridResolution));
                     break;
-                case nameof(Mandala.CurrentElementColor):
-                    OnPropertyChanged(nameof(CurrentElementColor));
-                    break;
-                case nameof(Mandala.CurrentElementStrokeThickness):
-                    OnPropertyChanged(nameof(CurrentElementStrokeThickness));
-                    break;
             }
         }
 
@@ -51,9 +44,7 @@ namespace Games.MandalaGamePlugin.GameView.ViewModels
 
         public int MandalaGridResolution => mandala.MandalaGridResolution;
 
-        public SolidColorBrush CurrentElementColor => new SolidColorBrush(mandala.CurrentElementColor);
-
-        public Color PaintBrushStrokeColor => mandala.PaintBrushStrokeColor;
+        public SolidColorBrush PaintBrushStrokeColor => new SolidColorBrush(mandala.PaintBrushStrokeColor);
 
         public double PaintBrushStrokeThickness => mandala.PaintBrushStrokeThickness;
 
@@ -63,16 +54,17 @@ namespace Games.MandalaGamePlugin.GameView.ViewModels
 
         public ICommand MouseUpHandler => new MouseUpCommand(this);
 
-        public double CurrentElementStrokeThickness => mandala.CurrentElementStrokeThickness;
-
         public void AddNewMandalaElement(IMandalaElement item)
         {
+            item.StrokeThickness = mandala.CurrentElementStrokeThickness;
+            item.StrokeColor = mandala.CurrentElementColor;
+            item.NumberOfDubplications = mandala.MandalaGridResolution;
             mandala.Elements.Add(item);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

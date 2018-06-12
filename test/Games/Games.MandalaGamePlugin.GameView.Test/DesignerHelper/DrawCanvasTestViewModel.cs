@@ -1,7 +1,7 @@
 using System.Windows;
 using System.Windows.Media;
+using Games.MandalaGamePlugin.Data;
 using Games.MandalaGamePlugin.GameView.ViewModels;
-using Games.MandalaGamePlugin.Model;
 
 namespace Games.MandalaGamePlugin.GameView.Test
 {
@@ -13,9 +13,6 @@ namespace Games.MandalaGamePlugin.GameView.Test
         {
             PositionsList.Add(new Point(0.23, 0.489));
             PositionsList.Add(new Point(0.69, 0.12));
-            PositionsList.Add(new Point(0, 0.12));
-            PositionsList.Add(new Point(-0.19, 0.1952));
-            PositionsList.Add(new Point(-0.264, -0.993));
             IsDrawing = true;
 
             TestMandala.PaintBrushStrokeColor = Colors.Aqua;

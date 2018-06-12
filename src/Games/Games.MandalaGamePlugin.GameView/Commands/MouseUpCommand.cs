@@ -12,9 +12,6 @@ namespace Games.MandalaGamePlugin.GameView.Commands
         {
             MandalaViewModel.AddNewMandalaElement(new MandalaPolygonElement("Getrokken lijn")
             {
-                StrokeColor = MandalaViewModel.PaintBrushStrokeColor,
-                StrokeThickness = MandalaViewModel.PaintBrushStrokeThickness,
-                NumberOfDubplications = MandalaViewModel.MandalaGridResolution,
                 Points = MandalaViewModel.PositionsList.ToList()
             });
 

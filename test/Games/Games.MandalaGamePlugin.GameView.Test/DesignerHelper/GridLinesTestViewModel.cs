@@ -1,6 +1,6 @@
 using System.Windows.Media;
+using Games.MandalaGamePlugin.Data;
 using Games.MandalaGamePlugin.GameView.ViewModels;
-using Games.MandalaGamePlugin.Model;
 
 namespace Games.MandalaGamePlugin.GameView.Test
 {

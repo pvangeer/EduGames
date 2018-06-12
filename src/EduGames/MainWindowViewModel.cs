@@ -26,7 +26,7 @@ namespace EduGames
                 new MandalaGamePlugin()
             };
 
-            ActivateGame(GamesPluginList.First());
+            ActivateGame(GamesPluginList.Last());
         }
 
         public readonly ObservableCollection<IGamePlugin> GamesPluginList;

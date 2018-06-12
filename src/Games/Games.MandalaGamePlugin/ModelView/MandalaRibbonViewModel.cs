@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Windows.Input;
 using System.Windows.Media;
 using Games.MandalaGamePlugin.Data;
-using Games.MandalaGamePlugin.Model;
 
 namespace Games.MandalaGamePlugin.ModelView
 {

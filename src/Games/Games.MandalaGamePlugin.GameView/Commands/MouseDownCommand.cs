@@ -11,7 +11,7 @@ namespace Games.MandalaGamePlugin.GameView.Commands
 
         public override void Execute(object parameter)
         {
-            if (!(parameter is MouseTrackingObject trackingInformation))
+            if (!(parameter is MousePositionInformation trackingInformation))
             {
                 return;
             }

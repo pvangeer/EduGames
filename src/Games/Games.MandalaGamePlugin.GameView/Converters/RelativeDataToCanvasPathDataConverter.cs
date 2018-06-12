@@ -48,8 +48,9 @@ namespace Games.MandalaGamePlugin.GameView.Converters
 
         private Point RotatePoint(Point point, double rotation)
         {
-            var positionedX = point.X * Math.Cos(rotation) - point.Y * Math.Sin(rotation);
-            var positionedY = point.X * Math.Sin(rotation) + point.Y * Math.Cos(rotation);
+            var rotationInRadians = Math.PI / 180.0 * rotation;
+            var positionedX = point.X * Math.Cos(rotationInRadians) - point.Y * Math.Sin(rotationInRadians);
+            var positionedY = point.X * Math.Sin(rotationInRadians) + point.Y * Math.Cos(rotationInRadians);
             return new Point(positionedX, positionedY);
         }
 

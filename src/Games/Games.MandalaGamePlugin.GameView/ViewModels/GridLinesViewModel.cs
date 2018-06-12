@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using Games.MandalaGamePlugin.Model;
+using Games.MandalaGamePlugin.Data;
 
 namespace Games.MandalaGamePlugin.GameView.ViewModels
 {

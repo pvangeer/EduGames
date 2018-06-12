@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Media;
 using Games.MandalaGamePlugin.Annotations;
 using Games.MandalaGamePlugin.Data;
-using Games.MandalaGamePlugin.Model;
 
 namespace Games.MandalaGamePlugin.ModelView
 {

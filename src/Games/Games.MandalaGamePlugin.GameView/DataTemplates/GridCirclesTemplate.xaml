@@ -8,8 +8,9 @@
     <converters:RelativeToDimensionConverter x:Key="RelativeToDimensionConverter" />
     <converters:DiameterToCanvasLeftValueConverter x:Key="DiameterToCanvasLeftValueConverter" />
 
-    <DataTemplate DataType="viewModels:GridCirclesViewModel" x:Key="GridCirclesTemplate">
+    <DataTemplate x:Key="GridCirclesTemplate" DataType="viewModels:GridCirclesViewModel">
         <ItemsControl ItemsSource="{Binding CircleList}"
+                      Background="Transparent"
                       Visibility="{Binding GridVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <ItemsControl.ItemContainerStyle>
                 <Style>

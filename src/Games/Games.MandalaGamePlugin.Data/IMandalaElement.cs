@@ -8,9 +8,11 @@ namespace Games.MandalaGamePlugin.Data
 
         string Type { get; }
 
-        Color StrokeColor { get; }
+        int NumberOfDubplications { get; set; }
 
-        double StrokeThickness { get; }
+        Color StrokeColor { get; set; }
+
+        double StrokeThickness { get; set; }
 
         string ToString();
     }

@@ -1,8 +1,38 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:viewModels="clr-namespace:Games.MandalaGamePlugin.GameView.ViewModels">
+                    xmlns:viewModels="clr-namespace:Games.MandalaGamePlugin.GameView.ViewModels"
+                    xmlns:converters="clr-namespace:Games.MandalaGamePlugin.GameView.Converters">
 
-    <DataTemplate DataType="viewModels:MandalaElementsViewModel" x:Key="MandalaElementsTemplate">
+    <converters:MandalaElementToCanvasPathDataConverter x:Key="MandalaDataToCanvasPathDataConverter" />
 
+    <DataTemplate  x:Key="MandalaElementsTemplate" DataType="viewModels:MandalaElementsViewModel">
+        <ItemsControl ItemsSource="{Binding MandalaElementsList}" 
+                      Background="Transparent">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas 
+                        Name="MandalaElementsCanvas" 
+                        IsItemsHost="True" 
+                        Background="Transparent"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="viewModels:PolygonElementViewModel">
+                    <Grid>
+                        <Path StrokeThickness="{Binding StrokeThickness}"
+                              Stroke="{Binding StrokeColor}">
+                            <Path.Data>
+                                <MultiBinding Converter="{StaticResource MandalaDataToCanvasPathDataConverter}">
+                                    <Binding ElementName="MandalaElementsCanvas" Path="ActualWidth"/>
+                                    <Binding ElementName="MandalaElementsCanvas" Path="ActualHeight"/>
+                                    <Binding Path="ShapeData"/>
+                                    <Binding Path="NumberOfDuplications"/>
+                                </MultiBinding>
+                            </Path.Data>
+                        </Path>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </DataTemplate>
 </ResourceDictionary>

@@ -61,7 +61,11 @@
     </Compile>
     <Compile Include="DesignerHelper\GridCirclesTestViewModel.cs" />
     <Compile Include="DesignerHelper\GridLinesTestViewModel.cs" />
-    <Compile Include="DrawCanvasTestViewModel.cs" />
+    <Compile Include="DesignerHelper\MandalaElementsTemplateDesignTestControl.xaml.cs">
+      <DependentUpon>MandalaElementsTemplateDesignTestControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DesignerHelper\DrawCanvasTestViewModel.cs" />
+    <Compile Include="DesignerHelper\MandalaElementsTestViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -77,6 +81,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="DesignerHelper\GridCirclesDesignTestControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DesignerHelper\MandalaElementsTemplateDesignTestControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
