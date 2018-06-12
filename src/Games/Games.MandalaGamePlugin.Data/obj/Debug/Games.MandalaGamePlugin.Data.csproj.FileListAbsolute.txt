@@ -1,5 +1,0 @@
-D:\pieter\EduGames\src\Games\Games.MandalaGamePlugin.Data\bin\Debug\Games.MandalaGamePlugin.Data.dll
-D:\pieter\EduGames\src\Games\Games.MandalaGamePlugin.Data\bin\Debug\Games.MandalaGamePlugin.Data.pdb
-D:\pieter\EduGames\src\Games\Games.MandalaGamePlugin.Data\obj\Debug\Games.MandalaGamePlugin.Data.csproj.CoreCompileInputs.cache
-D:\pieter\EduGames\src\Games\Games.MandalaGamePlugin.Data\obj\Debug\Games.MandalaGamePlugin.Data.dll
-D:\pieter\EduGames\src\Games\Games.MandalaGamePlugin.Data\obj\Debug\Games.MandalaGamePlugin.Data.pdb
