@@ -14,7 +14,7 @@ namespace Games.MandalaGamePlugin.Data
 
         public string DisplayName => $"{Type} ({Points?.Count() ?? 0} punten)";
 
-        public string Type { get; private set; }
+        public string Type { get; }
 
         public IEnumerable<Point> Points;
 

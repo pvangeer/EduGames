@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
@@ -10,7 +9,7 @@ namespace Games.MandalaGamePlugin.ModelView
 {
     public static class MandalaSaveHelper
     {
-        public static void SaveMandala(Canvas canvas)
+        public static void SaveMandala(Visual visual)
         {
             var filename = GetFileName();
             if (filename == null)
@@ -19,7 +18,7 @@ namespace Games.MandalaGamePlugin.ModelView
             }
             var ext = Path.GetExtension(filename).ToLower();
 
-            var renderTargetBitmap = PrepareRenderTargetBitmap(canvas);
+            var renderTargetBitmap = PrepareRenderTargetBitmap(visual);
 
             BitmapEncoder bitmapEncoder = null;
             switch (ext)
@@ -65,9 +64,9 @@ namespace Games.MandalaGamePlugin.ModelView
             }
         }
 
-        private static RenderTargetBitmap PrepareRenderTargetBitmap(Canvas canvas)
+        private static RenderTargetBitmap PrepareRenderTargetBitmap(Visual visual)
         {
-            Rect bounds = VisualTreeHelper.GetDescendantBounds(canvas);
+            Rect bounds = VisualTreeHelper.GetDescendantBounds(visual);
             double dpi = 96d;
 
             RenderTargetBitmap rtb = new RenderTargetBitmap((int) bounds.Width, (int) bounds.Height, dpi, dpi,
@@ -76,7 +75,7 @@ namespace Games.MandalaGamePlugin.ModelView
             DrawingVisual dv = new DrawingVisual();
             using (DrawingContext dc = dv.RenderOpen())
             {
-                VisualBrush vb = new VisualBrush(canvas);
+                VisualBrush vb = new VisualBrush(visual);
                 dc.DrawRectangle(vb, null, new Rect(new Point(), bounds.Size));
             }
 

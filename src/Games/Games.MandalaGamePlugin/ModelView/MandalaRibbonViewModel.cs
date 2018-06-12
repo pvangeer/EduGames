@@ -39,7 +39,7 @@ namespace Games.MandalaGamePlugin.ModelView
 
         public Color? GridBrushStrokeColor
         {
-            get { return mandala.GridBrushStrokeColor; }
+            get => mandala.GridBrushStrokeColor;
             set
             {
                 mandala.GridBrushStrokeColor = value ?? Colors.Transparent;
@@ -93,7 +93,7 @@ namespace Games.MandalaGamePlugin.ModelView
 
         public int CurrentElementStrokeThickness
         {
-            get { return mandala.CurrentElementStrokeThickness; }
+            get => mandala.CurrentElementStrokeThickness;
             set
             {
                 mandala.CurrentElementStrokeThickness = value;

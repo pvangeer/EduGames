@@ -6,7 +6,6 @@
                     xmlns:mousePositionTracker="clr-namespace:Games.MandalaGamePlugin.GameView.MousePositionTracker">
 
     <converters:PositionsToMandalaElementDrawObjectsConverter x:Key="PositionsToMandalaElementDrawObjectsConverter" />
-    <converters:MousePositionToParameterConverter x:Key="MousePositionToParameterConverter" />
     <converters:RelativeDataToCanvasPathDataConverter x:Key="RelativeDataToCanvasPathDataConverter" />
     <converters:MandalaElementDrawObjectToRelativePathDataConverter x:Key="MandalaElementDrawObjectToRelativePathDataConverter" />
 

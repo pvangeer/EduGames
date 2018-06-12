@@ -19,8 +19,8 @@
     <UserControl.DataContext>
         <viewModels:MandalaGameViewModel/>
     </UserControl.DataContext>
-    
-    <Grid Background="{Binding BackgroundColor}">
+
+    <Grid Background="{Binding BackgroundColor}" Name="MandalaGrid"  x:FieldModifier="public" Margin="5">
         <ContentPresenter Content="{Binding GridCirclesViewModel}" ContentTemplate="{StaticResource GridCirclesTemplate}"/>
         <ContentPresenter Content="{Binding GridLinesViewModel}" ContentTemplate="{StaticResource GridLinesTemplate}"/>
         <ContentPresenter Content="{Binding MandalaElementsViewModel}" ContentTemplate="{StaticResource MandalaElementsTemplate}"/>

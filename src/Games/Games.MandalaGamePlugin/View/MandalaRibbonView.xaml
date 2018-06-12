@@ -80,7 +80,7 @@
                         </i:Interaction.Triggers>-->
                     </fluent:ColorGallery>
                 </fluent:DropDownButton>
-                <fluent:CheckBox Header="Grid tonen" IsChecked="{Binding ShowGrid}"></fluent:CheckBox>
+                <fluent:CheckBox Header="Grid tonen" IsChecked="{Binding ShowGrid}" />
             </fluent:RibbonGroupBox>
             <fluent:RibbonGroupBox Header="Elementen">
                 <ListView Height="60" Width="200" ItemsSource="{Binding ElementsList}">
@@ -105,17 +105,16 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-                <fluent:Button Size="Middle" Header="Terugdraaien" Command="{Binding RevertLastChange}"></fluent:Button>
+                <fluent:Button Size="Middle" Header="Terugdraaien" Command="{Binding RevertLastChange}" />
             </fluent:RibbonGroupBox>
             <fluent:RibbonGroupBox Header="Tekenen">
                 <StackPanel CanHorizontallyScroll="False" CanVerticallyScroll="False" Orientation="Horizontal">
-                    <Label Content="Resolutie:" HorizontalAlignment="Left"></Label>
+                    <Label Content="Resolutie:" HorizontalAlignment="Left" />
                     <ComboBox Width="100" Margin="0" Height="20" 
                               ItemsSource="{Binding Path=PossibleResolutions}"
                               DisplayMemberPath="Value"
                               SelectedValuePath="Key"
-                              SelectedValue="{Binding Path=MandalaGridResolution}">
-                    </ComboBox>
+                              SelectedValue="{Binding Path=MandalaGridResolution}" />
                 </StackPanel>
                 <fluent:DropDownButton SizeDefinition="Middle" Header="Element">
                     <fluent:DropDownButton.Icon>
@@ -143,7 +142,7 @@
                         </i:Interaction.Triggers>-->
                     </fluent:ColorGallery>
                 </fluent:DropDownButton>
-                <fluent:Spinner Header="Lijndikte" Value="{Binding CurrentElementStrokeThickness}" Minimum="1" Maximum="10" Height="20"></fluent:Spinner>
+                <fluent:Spinner Header="Lijndikte" Value="{Binding CurrentElementStrokeThickness}" Minimum="1" Maximum="10" Height="20" />
             </fluent:RibbonGroupBox>
         </fluent:RibbonTabItem>
     </fluent:Ribbon>
