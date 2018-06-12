@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Windows;
 using Games.MandalaGamePlugin.Data;
 using Games.MandalaGamePlugin.GameView.ViewModels;
 
@@ -10,6 +11,11 @@ namespace Games.MandalaGamePlugin.GameView.Commands
 
         public override void Execute(object parameter)
         {
+            if (!(parameter is FrameworkElement frameworkElement))
+            {
+                return;
+            }
+
             MandalaViewModel.AddNewMandalaElement(new MandalaPolygonElement("Getrokken lijn")
             {
                 Points = MandalaViewModel.PositionsList.ToList()
@@ -17,11 +23,13 @@ namespace Games.MandalaGamePlugin.GameView.Commands
 
             MandalaViewModel.PositionsList.Clear();
             MandalaViewModel.IsDrawing = false;
+
+            frameworkElement.ReleaseMouseCapture();
         }
 
         public override bool CanExecute(object parameter)
         {
-            return MandalaViewModel.IsDrawing;
+            return true;
         }
     }
 }

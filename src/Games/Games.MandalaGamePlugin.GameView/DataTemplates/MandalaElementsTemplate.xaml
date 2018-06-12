@@ -6,14 +6,15 @@
     <converters:MandalaElementToCanvasPathDataConverter x:Key="MandalaDataToCanvasPathDataConverter" />
 
     <DataTemplate  x:Key="MandalaElementsTemplate" DataType="viewModels:MandalaElementsViewModel">
-        <ItemsControl ItemsSource="{Binding MandalaElementsList}" 
+        <ItemsControl ItemsSource="{Binding MandalaElementsList, UpdateSourceTrigger=PropertyChanged}" 
                       Background="Transparent">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas 
                         Name="MandalaElementsCanvas" 
                         IsItemsHost="True" 
-                        Background="Transparent"/>
+                        Background="Transparent"
+                        ClipToBounds="True"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>

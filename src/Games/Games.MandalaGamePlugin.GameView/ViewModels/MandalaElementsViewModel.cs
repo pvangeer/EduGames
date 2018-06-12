@@ -31,7 +31,6 @@ namespace Games.MandalaGamePlugin.GameView.ViewModels
                 {
                     MandalaElementsList.Add(CreateMandalaElementViewModel(mandalaElement));
                 }
-                OnPropertyChanged(nameof(MandalaElementsList));
             }
 
             if (e.Action == NotifyCollectionChangedAction.Remove)
@@ -40,13 +39,11 @@ namespace Games.MandalaGamePlugin.GameView.ViewModels
                 {
                     MandalaElementsList.Remove(MandalaElementsList.First(vm => vm.MandalaElement == mandalaElement));
                 }
-                OnPropertyChanged(nameof(MandalaElementsList));
             }
 
             if (e.Action == NotifyCollectionChangedAction.Reset)
             {
                 MandalaElementsList.Clear();
-                OnPropertyChanged(nameof(MandalaElementsList));
             }
         }
 

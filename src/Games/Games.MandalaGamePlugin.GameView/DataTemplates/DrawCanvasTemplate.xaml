@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:viewModels="clr-namespace:Games.MandalaGamePlugin.GameView.ViewModels"
                     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                    xmlns:converters="clr-namespace:Games.MandalaGamePlugin.GameView.Converters">
+                    xmlns:converters="clr-namespace:Games.MandalaGamePlugin.GameView.Converters"
+                    xmlns:mousePositionTracker="clr-namespace:Games.MandalaGamePlugin.GameView.MousePositionTracker">
 
     <converters:PositionsToMandalaElementDrawObjectsConverter x:Key="PositionsToMandalaElementDrawObjectsConverter" />
     <converters:MousePositionToParameterConverter x:Key="MousePositionToParameterConverter" />
@@ -21,32 +22,13 @@
             </ItemsControl.ItemsSource>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <Canvas Background="Transparent" x:Name="DrawingCanvas">
+                    <Canvas Background="Transparent" x:Name="DrawingCanvas" 
+                            mousePositionTracker:MouseBehaviour.MouseDownCommand="{Binding MouseDownHandler}"
+                            mousePositionTracker:MouseBehaviour.MouseMoveCommand="{Binding MouseMoveHandler}"
+                            ClipToBounds="True">
                         <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseDown">
-                                <i:InvokeCommandAction Command="{Binding MouseDownHandler}">
-                                    <i:InvokeCommandAction.CommandParameter>
-                                        <MultiBinding Converter="{StaticResource MousePositionToParameterConverter}">
-                                            <Binding ElementName="DrawingCanvas"/>
-                                            <Binding ElementName="DrawingCanvas" Path="ActualWidth"/>
-                                            <Binding ElementName="DrawingCanvas" Path="ActualHeight"/>
-                                        </MultiBinding>
-                                    </i:InvokeCommandAction.CommandParameter>
-                                </i:InvokeCommandAction>
-                            </i:EventTrigger>
-                            <i:EventTrigger EventName="MouseMove">
-                                <i:InvokeCommandAction Command="{Binding MouseMoveHandler}">
-                                    <i:InvokeCommandAction.CommandParameter>
-                                        <MultiBinding Converter="{StaticResource MousePositionToParameterConverter}">
-                                            <Binding ElementName="DrawingCanvas"/>
-                                            <Binding ElementName="DrawingCanvas" Path="ActualWidth"/>
-                                            <Binding ElementName="DrawingCanvas" Path="ActualHeight"/>
-                                        </MultiBinding>
-                                    </i:InvokeCommandAction.CommandParameter>
-                                </i:InvokeCommandAction>
-                            </i:EventTrigger>
                             <i:EventTrigger EventName="MouseUp">
-                                <i:InvokeCommandAction Command="{Binding MouseUpHandler}"/>
+                                <i:InvokeCommandAction Command="{Binding MouseUpHandler}" CommandParameter="{Binding ElementName=DrawingCanvas}"/>
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </Canvas>

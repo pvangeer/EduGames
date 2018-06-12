@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Input;
 using Games.MandalaGamePlugin.GameView.MousePositionTracker;
 using Games.MandalaGamePlugin.GameView.ViewModels;
 
@@ -11,15 +12,12 @@ namespace Games.MandalaGamePlugin.GameView.Commands
 
         public override void Execute(object parameter)
         {
-            if (!(parameter is MousePositionInformation trackingInformation))
+            if (!(parameter is MouseEventArgs eventArgs) || !(eventArgs.Source is FrameworkElement frameworkElement))
             {
                 return;
             }
 
-            var minWidthHeightRadius = Math.Min(trackingInformation.ElementWidth / 2.0, trackingInformation.ElementHeight / 2.0);
-            var relativeX = (trackingInformation.MousePosition.X - trackingInformation.ElementWidth / 2.0) / minWidthHeightRadius;
-            var relativeY = (trackingInformation.ElementHeight / 2.0 - trackingInformation.MousePosition.Y) / minWidthHeightRadius;
-            MandalaViewModel.PositionsList.Add(new Point(relativeX, relativeY));
+            MandalaViewModel.PositionsList.Add(GetRelativeMousePosition(eventArgs, frameworkElement));
             MandalaViewModel.OnPropertyChanged(nameof(MandalaViewModel.PositionsList));
         }
 
