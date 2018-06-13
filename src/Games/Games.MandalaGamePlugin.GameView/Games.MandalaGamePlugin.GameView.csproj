@@ -59,17 +59,14 @@
     <Compile Include="ViewModels\GridCirclesViewModel.cs" />
     <Compile Include="ViewModels\GridLinesViewModel.cs" />
     <Compile Include="ViewModels\GridLineViewModel.cs" />
-    <Compile Include="Converters\MandalaElementDrawObjectToRelativePathDataConverter.cs" />
     <Compile Include="MandalaGameView.xaml.cs">
       <DependentUpon>MandalaGameView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\MandalaElementDrawObject.cs" />
     <Compile Include="ViewModels\MandalaElementsViewModel.cs" />
     <Compile Include="Commands\MouseCommandBase.cs" />
     <Compile Include="Commands\MouseDownCommand.cs" />
     <Compile Include="Commands\MouseMoveCommand.cs" />
     <Compile Include="Commands\MouseUpCommand.cs" />
-    <Compile Include="Converters\PositionsToMandalaElementDrawObjectsConverter.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

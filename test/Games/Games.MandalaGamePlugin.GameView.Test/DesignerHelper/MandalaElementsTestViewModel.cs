@@ -4,15 +4,15 @@ using System.Windows.Media;
 using Games.MandalaGamePlugin.Data;
 using Games.MandalaGamePlugin.GameView.ViewModels;
 
-namespace Games.MandalaGamePlugin.GameView.Test
+namespace Games.MandalaGamePlugin.GameView.Test.DesignerHelper
 {
     public class MandalaElementsTestViewModel : MandalaElementsViewModel
     {
-        static Mandala TestMandala = new Mandala();
+        public static readonly Mandala TestMandala = new Mandala();
 
         public MandalaElementsTestViewModel() : base(TestMandala)
         {
-            TestMandala.Elements.Add(new MandalaPolygonElement("test")
+            TestMandala.Elements.Add(new MandalaPolygonElement
             {
                 NumberOfDubplications = 6,
                 Points = new List<Point>

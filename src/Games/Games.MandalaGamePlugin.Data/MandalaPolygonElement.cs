@@ -7,14 +7,7 @@ namespace Games.MandalaGamePlugin.Data
 {
     public class MandalaPolygonElement : IMandalaElement
     {
-        public MandalaPolygonElement(string name)
-        {
-            Type = name;
-        }
-
-        public string DisplayName => $"{Type} ({Points?.Count() ?? 0} punten)";
-
-        public string Type { get; }
+        public string DisplayName => $"Getrokken lijn ({Points?.Count() ?? 0} punten)";
 
         public IEnumerable<Point> Points;
 
@@ -26,7 +19,7 @@ namespace Games.MandalaGamePlugin.Data
 
         public override string ToString()
         {
-            return Type;
+            return DisplayName;
         }
     }
 }

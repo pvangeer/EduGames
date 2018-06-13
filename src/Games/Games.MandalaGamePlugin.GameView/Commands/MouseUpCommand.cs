@@ -16,13 +16,14 @@ namespace Games.MandalaGamePlugin.GameView.Commands
                 return;
             }
 
-            MandalaViewModel.AddNewMandalaElement(new MandalaPolygonElement("Getrokken lijn")
+            MandalaViewModel.AddNewMandalaElement(new MandalaPolygonElement
             {
                 Points = MandalaViewModel.PositionsList.ToList()
             });
 
             MandalaViewModel.PositionsList.Clear();
             MandalaViewModel.IsDrawing = false;
+            MandalaViewModel.OnPropertyChanged(nameof(MandalaViewModel.IsDrawing));
 
             frameworkElement.ReleaseMouseCapture();
         }

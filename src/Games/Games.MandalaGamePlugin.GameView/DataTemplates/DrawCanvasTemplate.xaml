@@ -5,51 +5,31 @@
                     xmlns:converters="clr-namespace:Games.MandalaGamePlugin.GameView.Converters"
                     xmlns:mousePositionTracker="clr-namespace:Games.MandalaGamePlugin.GameView.MousePositionTracker">
 
-    <converters:PositionsToMandalaElementDrawObjectsConverter x:Key="PositionsToMandalaElementDrawObjectsConverter" />
-    <converters:RelativeDataToCanvasPathDataConverter x:Key="RelativeDataToCanvasPathDataConverter" />
-    <converters:MandalaElementDrawObjectToRelativePathDataConverter x:Key="MandalaElementDrawObjectToRelativePathDataConverter" />
+    <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    <converters:MandalaElementToCanvasPathDataConverter x:Key="MandalaDataToCanvasPathDataConverter" />
 
     <DataTemplate x:Key="DrawCanvasTemplate" DataType="viewModels:DrawCanvasViewModel">
-        <ItemsControl Background="Transparent">
-            <ItemsControl.ItemsSource>
-                <MultiBinding Converter="{StaticResource PositionsToMandalaElementDrawObjectsConverter}">
-                    <Binding Path="PaintBrushStrokeColor"/>
-                    <Binding Path="PaintBrushStrokeThickness"/>
-                    <Binding Path="PositionsList"/>
-                    <Binding Path="MandalaGridResolution"/>
-                </MultiBinding>
-            </ItemsControl.ItemsSource>
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Canvas Background="Transparent" x:Name="DrawingCanvas" 
+        <Canvas Background="Transparent" x:Name="DrawingCanvas" 
                             mousePositionTracker:MouseBehaviour.MouseDownCommand="{Binding MouseDownHandler}"
                             mousePositionTracker:MouseBehaviour.MouseMoveCommand="{Binding MouseMoveHandler}"
                             ClipToBounds="True">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseUp">
-                                <i:InvokeCommandAction Command="{Binding MouseUpHandler}" CommandParameter="{Binding ElementName=DrawingCanvas}"/>
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </Canvas>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="viewModels:MandalaElementDrawObject">
-                    <Grid>
-                        <Path StrokeThickness="{Binding StrokeThickness}"
-                              Stroke="{Binding StrokeColor}">
-                            <Path.Data>
-                                <MultiBinding Converter="{StaticResource RelativeDataToCanvasPathDataConverter}">
-                                    <Binding ElementName="DrawingCanvas" Path="ActualWidth"/>
-                                    <Binding ElementName="DrawingCanvas" Path="ActualHeight"/>
-                                    <Binding Path="Points"/>
-                                    <Binding Path="Rotation"/>
-                                </MultiBinding>
-                            </Path.Data>
-                        </Path>
-                    </Grid>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseUp">
+                    <i:InvokeCommandAction Command="{Binding MouseUpHandler}" CommandParameter="{Binding ElementName=DrawingCanvas}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <Path StrokeThickness="{Binding PaintBrushStrokeThickness}"
+                              Stroke="{Binding PaintBrushStrokeColor}"
+                              Visibility="{Binding IsDrawing, Converter={StaticResource BoolToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged }">
+                <Path.Data>
+                    <MultiBinding Converter="{StaticResource MandalaDataToCanvasPathDataConverter}">
+                        <Binding ElementName="DrawingCanvas" Path="ActualWidth"/>
+                        <Binding ElementName="DrawingCanvas" Path="ActualHeight"/>
+                        <Binding Path="PositionsList" UpdateSourceTrigger="PropertyChanged"/>
+                        <Binding Path="MandalaGridResolution"/>
+                    </MultiBinding>
+                </Path.Data>
+            </Path>
+        </Canvas>
     </DataTemplate>
 </ResourceDictionary>

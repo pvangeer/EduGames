@@ -7,7 +7,7 @@ namespace Games.MandalaGamePlugin.GameView.Commands
     public class MouseMoveCommand : MouseCommandBase
     {
         public MouseMoveCommand(DrawCanvasViewModel mandalaViewModel) : base(mandalaViewModel) { }
-
+        
         public override void Execute(object parameter)
         {
             if (!(parameter is MouseEventArgs eventArgs) || !(eventArgs.Source is FrameworkElement frameworkElement))

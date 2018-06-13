@@ -45,11 +45,12 @@ namespace EduGames
                 if (plugin.GameRibbon != null)
                 {
                     var isActivePlugin = plugin == gamePlugin;
-                    plugin.GameRibbon.Visibility = isActivePlugin ? Visibility.Visible : Visibility.Collapsed;
                     if (isActivePlugin)
                     {
                         RibbonSelectedTabItem = gamePlugin.GameRibbon;
                     }
+                    plugin.GameRibbon.Visibility = isActivePlugin ? Visibility.Visible : Visibility.Collapsed;
+
                 }
             }
         }

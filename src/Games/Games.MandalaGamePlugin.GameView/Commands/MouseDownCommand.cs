@@ -19,6 +19,7 @@ namespace Games.MandalaGamePlugin.GameView.Commands
 
             MandalaViewModel.PositionsList.Clear();
             MandalaViewModel.IsDrawing = true;
+            MandalaViewModel.OnPropertyChanged(nameof(MandalaViewModel.IsDrawing));
 
             MandalaViewModel.PositionsList.Add(GetRelativeMousePosition(eventArgs, frameworkElement));
         }

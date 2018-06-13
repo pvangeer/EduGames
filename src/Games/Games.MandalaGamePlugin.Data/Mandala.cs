@@ -6,30 +6,20 @@ namespace Games.MandalaGamePlugin.Data
 {
     public class Mandala : INotifyPropertyChanged
     {
-        private int circularGridResolution;
-        private int mandalaGridResolution;
-        private bool showGrid;
-        private int currentElementStrokeThickness;
-        private Color currentElementColor;
-        private double paintBrushStrokeThickness;
-        private Color paintBrushStrokeColor;
-        private double gridBrushStrokeThickness;
-        private Color gridBrushStrokeColor;
-        private Color backgroundColor;
+        private int circularGridResolution = 10;
+        private int mandalaGridResolution = 6;
+        private bool showGrid = true;
+        private int currentElementStrokeThickness = 3;
+        private Color currentElementColor = Colors.Green;
+        private double paintBrushStrokeThickness = 1;
+        private Color paintBrushStrokeColor = Colors.Purple;
+        private double gridBrushStrokeThickness = 1;
+        private Color gridBrushStrokeColor = Colors.Gray;
+        private Color backgroundColor = Colors.LightYellow;
     
         public Mandala()
         {
             Elements = new ObservableCollection<IMandalaElement>();
-            BackgroundColor = Colors.LightYellow;
-            CircularGridResolution = 10;
-            MandalaGridResolution = 6;
-            PaintBrushStrokeColor = Colors.Purple;
-            PaintBrushStrokeThickness = 1;
-            GridBrushStrokeColor = Colors.Gray;
-            GridBrushStrokeThickness = 1;
-            CurrentElementColor = Colors.Green;
-            CurrentElementStrokeThickness = 3;
-            ShowGrid = true;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

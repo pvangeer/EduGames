@@ -6,8 +6,6 @@ namespace Games.MandalaGamePlugin.Data
     {
         string DisplayName { get; }
 
-        string Type { get; }
-
         int NumberOfDubplications { get; set; }
 
         Color StrokeColor { get; set; }

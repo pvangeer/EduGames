@@ -7,6 +7,7 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:modelView="clr-namespace:Games.MandalaGamePlugin.ModelView"
              xmlns:view="clr-namespace:Games.MandalaGamePlugin.View"
+             xmlns:data="clr-namespace:Games.MandalaGamePlugin.Data;assembly=Games.MandalaGamePlugin.Data"
              mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary Source="/Fluent;Component/Themes/generic.xaml"/>
@@ -88,7 +89,7 @@
                         <view:ScrollOnNewItem/>
                     </i:Interaction.Behaviors>
                     <ListView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate DataType="data:IMandalaElement">
                             <StackPanel Orientation="Horizontal" Height="16">
                                 <Canvas Width="20" Height="16" Margin="1">
                                     <Grid Width="16" Height="16">

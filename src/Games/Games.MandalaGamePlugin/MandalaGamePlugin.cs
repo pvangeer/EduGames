@@ -6,17 +6,18 @@ using Games.MandalaGamePlugin.Data;
 using Games.MandalaGamePlugin.GameView;
 using Games.MandalaGamePlugin.GameView.ViewModels;
 using Games.MandalaGamePlugin.ModelView;
+using Games.MandalaGamePlugin.View;
 
 namespace Games.MandalaGamePlugin
 {
     public class MandalaGamePlugin : IGamePlugin
     {
-        private readonly View.MandalaRibbonView ribbon;
+        private readonly MandalaRibbonView ribbon;
         private readonly MandalaGameView mandalaGameView;
 
         public MandalaGamePlugin()
         {
-            ribbon = new View.MandalaRibbonView();
+            ribbon = new MandalaRibbonView();
             mandalaGameView = new MandalaGameView();
 
             InitiateNewMandala();

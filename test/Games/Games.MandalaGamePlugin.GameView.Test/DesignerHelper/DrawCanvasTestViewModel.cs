@@ -3,7 +3,7 @@ using System.Windows.Media;
 using Games.MandalaGamePlugin.Data;
 using Games.MandalaGamePlugin.GameView.ViewModels;
 
-namespace Games.MandalaGamePlugin.GameView.Test
+namespace Games.MandalaGamePlugin.GameView.Test.DesignerHelper
 {
     public class DrawCanvasTestViewModel : DrawCanvasViewModel
     {
