@@ -11,7 +11,7 @@ namespace Games.MandalaGamePlugin.GameView.Commands
 
         public override void Execute(object parameter)
         {
-            if (!(parameter is FrameworkElement frameworkElement))
+            if (!(parameter is FrameworkElement frameworkElement) || !MandalaViewModel.IsDrawing)
             {
                 return;
             }

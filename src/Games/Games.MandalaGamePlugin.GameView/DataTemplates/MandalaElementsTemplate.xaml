@@ -1,9 +1,33 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:viewModels="clr-namespace:Games.MandalaGamePlugin.GameView.ViewModels"
-                    xmlns:converters="clr-namespace:Games.MandalaGamePlugin.GameView.Converters">
+                    xmlns:converters="clr-namespace:Games.MandalaGamePlugin.GameView.Converters"
+                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                    xmlns:mousePositionTracker="clr-namespace:Games.MandalaGamePlugin.GameView.MousePositionTracker">
 
     <converters:MandalaElementToCanvasPathDataConverter x:Key="MandalaDataToCanvasPathDataConverter" />
+
+    <DataTemplate x:Key="PolygonElementPropertiesTemplate" DataType="viewModels:PolygonElementViewModel">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Label Content="Lijndikte" Grid.Column="0" Grid.Row="0"/>
+            <TextBox MinWidth="50" Text="{Binding StrokeThickness}">
+                <i:Interaction.Behaviors>
+                    <mousePositionTracker:AllowableCharactersTextBoxBehavior RegularExpression="^[0-9.\-]+$" MaxLength="50" />
+                </i:Interaction.Behaviors>
+            </TextBox>
+        </Grid>
+    </DataTemplate>
 
     <DataTemplate  x:Key="MandalaElementsTemplate" DataType="viewModels:MandalaElementsViewModel">
         <ItemsControl ItemsSource="{Binding MandalaElementsList, UpdateSourceTrigger=PropertyChanged}" 
@@ -21,7 +45,8 @@
                 <DataTemplate DataType="viewModels:PolygonElementViewModel">
                     <Grid>
                         <Path StrokeThickness="{Binding StrokeThickness}"
-                              Stroke="{Binding StrokeColor}">
+                              Stroke="{Binding StrokeColor}"
+                              mousePositionTracker:MouseBehaviour.MouseDownCommand="{Binding MouseDownHandler}">
                             <Path.Data>
                                 <MultiBinding Converter="{StaticResource MandalaDataToCanvasPathDataConverter}">
                                     <Binding ElementName="MandalaElementsCanvas" Path="ActualWidth"/>
@@ -31,6 +56,13 @@
                                 </MultiBinding>
                             </Path.Data>
                         </Path>
+                        <Popup IsOpen="{Binding EditElementProperties}"
+                               AllowsTransparency="True"
+                               Placement="Relative"
+                               StaysOpen="False"
+                               PopupAnimation="Fade">
+                            <ContentPresenter Content="{Binding }" ContentTemplate="{StaticResource PolygonElementPropertiesTemplate}"/>
+                        </Popup>
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

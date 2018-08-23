@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Converters\CanvasCenterLeftConverter.cs" />
     <Compile Include="Converters\MandalaElementToCanvasPathDataConverter.cs" />
+    <Compile Include="MousePositionTracker\AllowableCharactersTextBoxBehavior.cs" />
     <Compile Include="MousePositionTracker\MouseBehaviour.cs" />
     <Compile Include="ViewModels\CircleViewModel.cs" />
     <Compile Include="Converters\DiameterToCanvasTopValueConverter.cs" />
@@ -62,6 +63,7 @@
     <Compile Include="MandalaGameView.xaml.cs">
       <DependentUpon>MandalaGameView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Commands\MandalaElementMouseDownCommand.cs" />
     <Compile Include="ViewModels\MandalaElementsViewModel.cs" />
     <Compile Include="Commands\MouseCommandBase.cs" />
     <Compile Include="Commands\MouseDownCommand.cs" />

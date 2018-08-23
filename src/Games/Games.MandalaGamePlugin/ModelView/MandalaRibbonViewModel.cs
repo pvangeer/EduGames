@@ -71,13 +71,23 @@ namespace Games.MandalaGamePlugin.ModelView
             {36, "36"}
         };
 
-        public bool ShowGrid
+        public bool ShowMandalaGrid
         {
-            get { return mandala.ShowGrid; }
+            get => mandala.ShowMandalaGrid;
             set
             {
-                mandala.ShowGrid = value;
-                OnPropertyChanged(nameof(ShowGrid));
+                mandala.ShowMandalaGrid = value;
+                OnPropertyChanged(nameof(ShowMandalaGrid));
+            }
+        }
+
+        public bool ShowGridCircles
+        {
+            get => mandala.ShowGridCircles;
+            set
+            {
+                mandala.ShowGridCircles = value;
+                OnPropertyChanged(nameof(ShowGridCircles));
             }
         }
 
@@ -101,6 +111,16 @@ namespace Games.MandalaGamePlugin.ModelView
             }
         }
 
+        public int GridStrokeThickness
+        {
+            get => mandala.GridBrushStrokeThickness;
+            set
+            {
+                mandala.GridBrushStrokeThickness = value;
+                OnPropertyChanged(nameof(GridStrokeThickness));
+            }
+        }
+
         public ObservableCollection<IMandalaElement> ElementsList => mandala.Elements;
 
         public ICommand RevertLastChange => revertLastChangeCommand;
@@ -108,6 +128,8 @@ namespace Games.MandalaGamePlugin.ModelView
         public ICommand NewMandalaCommand => new NewMandalaCommand(this);
 
         public ICommand SaveMandalaCommand => new SaveMandalaCommand(this);
+
+
 
         public event EventHandler<EventArgs> SaveMandalaRequested;
 

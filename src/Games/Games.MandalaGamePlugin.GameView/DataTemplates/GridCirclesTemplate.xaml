@@ -11,7 +11,7 @@
     <DataTemplate x:Key="GridCirclesTemplate" DataType="viewModels:GridCirclesViewModel">
         <ItemsControl ItemsSource="{Binding CircleList}"
                       Background="Transparent"
-                      Visibility="{Binding GridVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                      Visibility="{Binding GridCirclesVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <ItemsControl.ItemContainerStyle>
                 <Style>
                     <Setter Property="Canvas.Left">

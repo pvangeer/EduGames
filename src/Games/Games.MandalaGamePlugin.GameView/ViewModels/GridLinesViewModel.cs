@@ -31,7 +31,7 @@ namespace Games.MandalaGamePlugin.GameView.ViewModels
             }
         }
 
-        public bool GridVisible => mandala.ShowGrid;
+        public bool MandalaGridVisible => mandala.ShowMandalaGrid;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -56,8 +56,8 @@ namespace Games.MandalaGamePlugin.GameView.ViewModels
                     gridLinesList = CreateGridLinesList();
                     OnPropertyChanged(nameof(GridLinesList));
                     break;
-                case nameof(Mandala.ShowGrid):
-                    OnPropertyChanged(nameof(GridVisible));
+                case nameof(Mandala.ShowMandalaGrid):
+                    OnPropertyChanged(nameof(MandalaGridVisible));
                     break;
             }
         }

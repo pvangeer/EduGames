@@ -10,7 +10,7 @@
     <DataTemplate x:Key="GridLinesTemplate" DataType="viewModels:GridLinesViewModel">
         <ItemsControl ItemsSource="{Binding GridLinesList}" 
                       Background="Transparent"
-                      Visibility="{Binding GridVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                      Visibility="{Binding MandalaGridVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas 

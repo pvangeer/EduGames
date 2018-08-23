@@ -10,11 +10,17 @@ namespace Games.MandalaGamePlugin.GameView.Commands
 
         public override void Execute(object parameter)
         {
-            if (!(parameter is MouseEventArgs eventArgs) || !(eventArgs.Source is FrameworkElement frameworkElement))
+            if (!(parameter is MouseEventArgs eventArgs))
             {
                 return;
             }
 
+            if (!(eventArgs.Source is FrameworkElement frameworkElement) || eventArgs.LeftButton == MouseButtonState.Released)
+            {
+                eventArgs.Handled = false;
+                return;
+            }
+            
             frameworkElement.CaptureMouse();
 
             MandalaViewModel.PositionsList.Clear();
