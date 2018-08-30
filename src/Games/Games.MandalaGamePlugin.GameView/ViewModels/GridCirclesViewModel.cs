@@ -35,6 +35,8 @@ namespace Games.MandalaGamePlugin.GameView.ViewModels
 
         public bool GridCirclesVisible => mandala.ShowGridCircles;
 
+        public double Margin => mandala.Margin;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -61,6 +63,9 @@ namespace Games.MandalaGamePlugin.GameView.ViewModels
                     break;
                 case nameof(Mandala.ShowGridCircles):
                     OnPropertyChanged(nameof(GridCirclesVisible));
+                    break;
+                case nameof(Mandala.Margin):
+                    OnPropertyChanged(nameof(Margin));
                     break;
             }
         }

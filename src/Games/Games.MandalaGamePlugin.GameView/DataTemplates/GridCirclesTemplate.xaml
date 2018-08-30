@@ -36,7 +36,7 @@
             </ItemsControl.ItemContainerStyle>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <Canvas Name="Canvas" IsItemsHost="True"/>
+                    <Canvas Name="Canvas" IsItemsHost="True" Margin="{Binding Margin}"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>

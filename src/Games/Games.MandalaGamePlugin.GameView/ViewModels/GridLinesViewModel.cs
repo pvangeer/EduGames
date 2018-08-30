@@ -33,6 +33,8 @@ namespace Games.MandalaGamePlugin.GameView.ViewModels
 
         public bool MandalaGridVisible => mandala.ShowMandalaGrid;
 
+        public double Margin => mandala.Margin;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -58,6 +60,9 @@ namespace Games.MandalaGamePlugin.GameView.ViewModels
                     break;
                 case nameof(Mandala.ShowMandalaGrid):
                     OnPropertyChanged(nameof(MandalaGridVisible));
+                    break;
+                case nameof(Mandala.Margin):
+                    OnPropertyChanged(nameof(Margin));
                     break;
             }
         }

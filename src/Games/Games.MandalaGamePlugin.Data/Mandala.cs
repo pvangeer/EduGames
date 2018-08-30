@@ -10,13 +10,14 @@ namespace Games.MandalaGamePlugin.Data
         private int mandalaGridResolution = 6;
         private bool showMandalaGrid = true;
         private int currentElementStrokeThickness = 3;
-        private Color currentElementColor = Colors.Green;
+        private Color currentElementColor = Colors.MediumPurple;
         private double paintBrushStrokeThickness = 1;
         private Color paintBrushStrokeColor = Colors.Purple;
         private int gridBrushStrokeThickness = 1;
         private Color gridBrushStrokeColor = Colors.Gray;
         private Color backgroundColor = Colors.LightYellow;
         private bool showGridCircles = true;
+        private double margin = 20.0;
 
         public Mandala()
         {
@@ -135,6 +136,16 @@ namespace Games.MandalaGamePlugin.Data
             {
                 gridBrushStrokeColor = value;
                 OnPropertyChanged(nameof(GridBrushStrokeColor));
+            }
+        }
+
+        public double Margin
+        {
+            get => margin;
+            set
+            {
+                margin = value;
+                OnPropertyChanged(nameof(Margin));
             }
         }
 

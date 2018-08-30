@@ -12,17 +12,18 @@ namespace Games.MandalaGamePlugin.ModelView
     {
         private readonly Mandala mandala;
         private readonly RevertLastChangeCommand revertLastChangeCommand;
+        private IMandalaElement selectedElement;
 
         public MandalaRibbonViewModel()
         {
             mandala = new Mandala();
-            revertLastChangeCommand = new RevertLastChangeCommand(mandala);
+            revertLastChangeCommand = new RevertLastChangeCommand(mandala, this);
         }
 
         public MandalaRibbonViewModel(Mandala mandala)
         {
             this.mandala = mandala;
-            revertLastChangeCommand = new RevertLastChangeCommand(mandala);
+            revertLastChangeCommand = new RevertLastChangeCommand(mandala, this);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -129,6 +130,25 @@ namespace Games.MandalaGamePlugin.ModelView
 
         public ICommand SaveMandalaCommand => new SaveMandalaCommand(this);
 
+        public double Margin
+        {
+            get => mandala.Margin;
+            set
+            {
+                mandala.Margin = value;
+                OnPropertyChanged(nameof(Margin));
+            }
+        }
+
+        public IMandalaElement SelectedElement
+        {
+            get => selectedElement;
+            set
+            {
+                selectedElement = value;
+                OnPropertyChanged(nameof(SelectedElement));
+            }
+        }
 
 
         public event EventHandler<EventArgs> SaveMandalaRequested;

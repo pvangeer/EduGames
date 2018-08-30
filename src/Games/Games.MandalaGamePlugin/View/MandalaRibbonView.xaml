@@ -82,11 +82,12 @@
                     </fluent:ColorGallery>
                 </fluent:DropDownButton>
                 <fluent:Spinner Header="Lijndikte" Value="{Binding GridStrokeThickness}" Minimum="1" Maximum="10" Height="20" />
+                <fluent:Spinner Header="Marge" Value="{Binding Margin}" Minimum="0" Maximum="300" Height="20" />
                 <fluent:CheckBox Header="Toon lijnen" IsChecked="{Binding ShowMandalaGrid}" />
                 <fluent:CheckBox Header="Toon cirkels" IsChecked="{Binding ShowGridCircles}"/>
             </fluent:RibbonGroupBox>
             <fluent:RibbonGroupBox Header="Elementen">
-                <ListView Height="60" Width="200" ItemsSource="{Binding ElementsList}">
+                <ListView Height="60" Width="200" ItemsSource="{Binding ElementsList}" SelectedItem="{Binding SelectedElement}">
                     <i:Interaction.Behaviors>
                         <view:ScrollOnNewItem/>
                     </i:Interaction.Behaviors>
@@ -108,7 +109,7 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-                <fluent:Button Size="Middle" Header="Terugdraaien" Command="{Binding RevertLastChange}" />
+                <fluent:Button Size="Small" Command="{Binding RevertLastChange}" Icon="/Games.MandalaGamePlugin;component\Resources\undo.png"/>
             </fluent:RibbonGroupBox>
             <fluent:RibbonGroupBox Header="Tekenen">
                 <StackPanel CanHorizontallyScroll="False" CanVerticallyScroll="False" Orientation="Horizontal">
